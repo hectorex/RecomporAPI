@@ -1,2 +1,2 @@
-# API-Python-com-Fast
-Desenvolvimento de API para integração entre sistema Web e Mobile do projeto Recompor.
+# Resumo
+A compostagem doméstica é um processo que ajuda a diminuir a emissão de gás carbônico no meio ambiente. Atualmente existem dois projetos focados em desenvolver sistemas que ajudem as pessoas a entenderem o que é compostagem e como executá-la em casa, um sistema web e outro mobile. O Projeto consiste no desenvolvimento de uma API (Application Programming Interface) para integrar e unificar esses dois sistemas. O intuito desse projeto é democratizar o uso dos sistemas, permitindo que os usuários acessem o sistema no dispositivo que eles tiverem disponível no momento. Além disso, a API garante melhor segurança dos dados e facilita o processo de atualização dos sistemas.
