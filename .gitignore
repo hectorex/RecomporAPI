@@ -1,3 +1,4 @@
-*.pyc
-
+#ignorando arquivos *.pyc
+*.pyc 
+#ignorando arquivos do vscode
 .vscode/
