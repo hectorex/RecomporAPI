@@ -1,1 +1,5 @@
-*.pyc
+API/_pycache_
+API/database/_pycache_
+API/models/_pycache_
+API/routes/_pycache_
+API/schemas/_pycache_
