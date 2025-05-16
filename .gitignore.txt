@@ -1,5 +1,0 @@
-API/__pycache__*.pyc
-API/database/__pycache__*.pyc
-API/models/__pycache__*.pyc
-API/routes/__pycache__*.pyc
-API/schemas/__pycache__*.pyc
