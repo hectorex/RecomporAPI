@@ -21,3 +21,7 @@ def criar_compostagem(composteira_id: str, compostagem: DadosCompostagem):
         "mensagem": f"Compostagem adicionada à composteira '{composteira['nome']}'.",
         "detalhes": dados
     }
+
+@router.get("/minhas_composteiras/{composteira_id}/minhas_compostagens")
+def listar_compostagens():
+    return [(compostagem) for compostagem in bd_compostagens]
