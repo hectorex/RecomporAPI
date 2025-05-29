@@ -3,12 +3,15 @@ from routes.composteira_routes import router as composteira_router
 from routes.compostagem_routes import router as compostagem_router
 
 app = FastAPI(                                 
-    title = "API Composteira",
-    description = "API ligação software web e mobile projeto Recompor",
-    version = "0.1.1", 
+    title = "Recompor - API",
+    description = "A compostagem doméstica é um processo que ajuda a diminuir a emissão de gás carbônico no meio ambiente. " \
+    "Atualmente existem dois projetos focados em desenvolver sistemas que ajudem as pessoas a entenderem o que é compostagem e como executá-la em casa, um sistema web e outro mobile. " \
+    "O Projeto consiste no desenvolvimento de uma API (Application Programming Interface) para integrar e unificar esses dois sistemas. " \
+    "O intuito desse projeto é democratizar o uso dos sistemas, " \
+    "permitindo que os usuários acessem o sistema no dispositivo que eles tiverem disponível no momento. Além disso, a API garante melhor segurança dos dados e facilita o processo de atualização dos sistemas.",
+    version = "0.1.0", 
     contact = {
-        "name": "Celso Hector",
-        "name": "Luiz Felipe",
+        "name": "the developers",
         "email": "inserir-email-felipe",
         "email": "celsohectorhm@gmail.com",
     },
