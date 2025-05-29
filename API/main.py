@@ -8,6 +8,8 @@ app = FastAPI(
     version = "0.1.1", 
     contact = {
         "name": "Celso Hector",
+        "name": "Luiz Felipe",
+        "email": "inserir-email-felipe",
         "email": "celsohectorhm@gmail.com",
     },
 ) 
