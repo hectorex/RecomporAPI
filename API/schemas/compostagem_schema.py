@@ -9,7 +9,7 @@ class DadosCompostagem(BaseModel):
     
     @field_validator('data')
     @classmethod
-    async def validar_data(cls,data:str):
+    def validar_data(cls,data:str):
         try:
             datetime.strptime(data,"%d/%m/%Y")
             return data
