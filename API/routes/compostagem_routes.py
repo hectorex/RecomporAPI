@@ -6,7 +6,7 @@ from uuid import uuid4
 router =  APIRouter()
 
 @router.post("/minhas_composteiras/{composteira_id}/criar_compostagem")
-def criar_compostagem(composteira_id: str, compostagem: DadosCompostagem):
+async def criar_compostagem(composteira_id: str, compostagem: DadosCompostagem):
     composteira = next(((composteira) for composteira in bd_composteiras if composteira["id"] == composteira_id), None)
     # Procuramos a primeira composteira cujo ID bate com o fornecido; se não houver, retornamos None
     if not composteira:
@@ -23,5 +23,5 @@ def criar_compostagem(composteira_id: str, compostagem: DadosCompostagem):
     }
 
 @router.get("/minhas_composteiras/{composteira_id}/minhas_compostagens")
-def listar_compostagens():
+async def listar_compostagens():
     return [(compostagem) for compostagem in bd_compostagens]

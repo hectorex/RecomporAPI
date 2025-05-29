@@ -6,7 +6,7 @@ from uuid import uuid4
 router =  APIRouter()
 
 @router.post("/criar_composteira")
-def criar_composteira(composteira: DadosComposteira):
+async def criar_composteira(composteira: DadosComposteira):
     dados = composteira.model_dump()
     dados["id"] = str(uuid4())
     dados["minhocas"] = "Tem minhocas" if composteira.minhocas else "Não tem minhocas"
@@ -16,7 +16,7 @@ def criar_composteira(composteira: DadosComposteira):
         "detalhes": dados
     }
 @router.get("/minhas_composteiras")
-def listar_composteiras():
+async def listar_composteiras():
     if len(bd_composteiras) >= 1:
         ret = ((composteira) for composteira in bd_composteiras)
     else:

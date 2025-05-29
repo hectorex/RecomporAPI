@@ -21,11 +21,11 @@ app.include_router(compostagem_router)
 app.include_router(composteira_router)
 
 @app.get("/")
-def welcome():
+async def welcome():
     return {"mensagem": "Está é a API do projeto Recompor"}
 
 @app.get("/status")
-def api_status():
+async def api_status():
     return {"status": "online",
             "versão": "0.1.1"}
 
