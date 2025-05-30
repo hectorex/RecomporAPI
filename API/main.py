@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from routes.composteira_routes import router as composteira_router
 from routes.compostagem_routes import router as compostagem_router
+from routes.user_routes import router as user_router
 
 app = FastAPI(                                 
     title = "Recompor - API",
@@ -19,6 +20,7 @@ app = FastAPI(
 
 app.include_router(compostagem_router)
 app.include_router(composteira_router)
+app.include_router(user_router)
 
 @app.get("/")
 def welcome():
