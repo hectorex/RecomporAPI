@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.security import OAuth2PasswordRequestForm
 from routes.composteira_routes import router as composteira_router
 from routes.compostagem_routes import router as compostagem_router
 from routes.user_routes import router as user_router
@@ -30,4 +31,8 @@ def welcome():
 def api_status():
     return {"status": "online",
             "versão": "0.1.1"}
+
+@app.post("/token")
+def aindaafazer():
+    pass
 

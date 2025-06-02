@@ -1,7 +1,8 @@
 from fastapi import APIRouter, HTTPException
-from schemas.user_schema import DadosUser
+from schemas.user_schema import DadosUser, DadosSenha
 from database.fake_db import bd_users
 from uuid import uuid4
+from segurança import get_password_hash
 
 router = APIRouter()
 
@@ -9,21 +10,23 @@ router = APIRouter()
 def criar_user(user: DadosUser):
     dados = user.model_dump()
     dados["id"] = str(uuid4())
+    dados["password"] = get_password_hash(user.password)
     bd_users.append(dados)
     return {
-        "mensagem": f"Bem-vindo, {dados["username"]}, {dados["id"]}."
+        "mensagem": f"Bem-vindo, {dados["username"]}, {dados["id"]}, {dados['password']}."
     }
 @router.put("/users/{user_id}")
-def edit_user(user_id: str, nova_senha: str):
+def edit_user(user_id: str, nova_senha: DadosSenha):
     user = next(((user) for user in bd_users if user_id == user["id"]), None)
     if not user:
         return HTTPException(status_code= 404, detail="O usuário em questão não foi encontrado.")
     elif nova_senha == user["password"]:
         return HTTPException(status_code= 400, detail="Senha em uso.")
     
-    user["password"] = nova_senha
+    user["password"] = nova_senha #corrigir o hash dps
+
     return {
-        "status": "senha atualizada com sucesso!"
+        "status": f"senha atualizada com sucesso! senha: {user["password"]}"
     }
 
 @router.delete("/users/{user_id}")
