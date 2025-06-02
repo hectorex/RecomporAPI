@@ -11,7 +11,7 @@ def criar_user(user: DadosUser):
     dados["id"] = str(uuid4())
     bd_users.append(dados)
     return {
-        "mensagem": f"Bem-vindo, {dados["username"]}."
+        "mensagem": f"Bem-vindo, {dados["username"]}, {dados["id"]}."
     }
 @router.put("/users/{user_id}")
 def edit_user(user_id: str, nova_senha: str):
@@ -22,6 +22,9 @@ def edit_user(user_id: str, nova_senha: str):
         return HTTPException(status_code= 400, detail="Senha em uso.")
     
     user["password"] = nova_senha
+    return {
+        "status": "senha atualizada com sucesso!"
+    }
 
 @router.delete("/users/{user_id}")
 def delete_user(user_id: str, senha: str):
