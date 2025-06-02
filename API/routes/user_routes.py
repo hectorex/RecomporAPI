@@ -8,7 +8,7 @@ router = APIRouter()
 @router.post("/criar_usuario")
 def criar_user(user: DadosUser):
     dados = user.model_dump()
-    dados[id] = str(uuid4())
+    dados["id"] = str(uuid4())
     bd_users.append(dados)
     return {
         "mensagem": f"Bem-vindo, {dados["username"]}."
