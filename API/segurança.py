@@ -14,7 +14,7 @@ def password_check(password: str):
     if len(password) < 6:
         strong = False
     if len(password) > 20:
-        strong = "Erro aqui"
+        strong = False
     if any(char.isdigit() for char in password) == False:
         strong = False
     if any(char.isupper() for char in password) == False:
