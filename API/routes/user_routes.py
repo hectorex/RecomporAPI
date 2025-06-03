@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException
 from schemas.user_schema import DadosUser, DadosSenha
 from database.fake_db import bd_users
 from uuid import uuid4
-from segurança import get_password_hash
+from segurança import get_password_hash, password_check
 
 router = APIRouter()
 
@@ -10,6 +10,13 @@ router = APIRouter()
 def criar_user(user: DadosUser):
     dados = user.model_dump()
     dados["id"] = str(uuid4())
+    if password_check(dados["password"]) == False:
+        return {"mensagem": "Senha inválida.",
+                "requisitos":"Deve conter de 6 a 20 digítos; "
+                             "Deve possuir pelo menos um número;"
+                             "Deve possuir pelo menos uma letra minúscula e uma maiúscula;"
+                             "Deve possuir um caracter especial."
+        } 
     dados["password"] = get_password_hash(user.password)
     bd_users.append(dados)
     return {
