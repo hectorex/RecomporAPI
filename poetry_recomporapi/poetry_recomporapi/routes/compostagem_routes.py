@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
-from schemas.compostagem_schema import DadosCompostagem
-from database.fake_db import bd_compostagens, bd_composteiras
+from poetry_recomporapi.schemas.compostagem_schema import DadosCompostagem
+from poetry_recomporapi.database.fake_db import bd_compostagens, bd_composteiras
 from uuid import uuid4
 
 router =  APIRouter()
