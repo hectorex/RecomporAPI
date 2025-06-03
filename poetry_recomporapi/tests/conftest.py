@@ -1,0 +1,24 @@
+import pytest
+from fastapi.testclient import TestClient
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session
+
+from poetry_recomporapi.main import app
+from poetry_recomporapi.models.User import table_registry
+
+
+@pytest.fixture
+def client():
+    return TestClient(app)
+
+
+@pytest.fixture
+def session():
+    engine = create_engine('sqlite:///:memory:') #isso esta em memoria, ou seja, isso deixa de existir quando parar de rodar
+    
+    table_registry.metadata.create_all(engine)
+
+    with Session(engine) as session: # abriu a sessao, o canal de comunicação com o db
+        yield session # 'ta aqui o q vc me pediu'
+
+    table_registry.metadata.drop_all(engine)
