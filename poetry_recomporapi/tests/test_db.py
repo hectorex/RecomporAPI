@@ -2,6 +2,8 @@ from dataclasses import asdict
 from sqlalchemy import select
 from sqlalchemy.orm.session import Session
 from API.models.User import User
+from API.models.compostagens import Compostagem
+from API.models.composteiras import Composteira
 
 def test_create_user(session: Session):
     new_user = User(
@@ -25,3 +27,6 @@ def test_create_user(session: Session):
         "password": "secret",
         "created_at": ...
     }
+
+# def test_create_composteira(session):
+#     new_composteira
