@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException
-from poetry_recomporapi.schemas.user_schema import DadosUser, DadosSenha
-from poetry_recomporapi.database.fake_db import bd_users
+from API.schemas.user_schema import DadosUser, DadosSenha
+from API.database.fake_db import bd_users
 from uuid import uuid4
-from poetry_recomporapi.segurança import get_password_hash, password_check
+from API.segurança import get_password_hash, password_check
 
 router = APIRouter()
 

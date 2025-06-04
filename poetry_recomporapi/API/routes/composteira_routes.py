@@ -1,6 +1,6 @@
 from fastapi import APIRouter
-from poetry_recomporapi.schemas.composteira_schema import DadosComposteira
-from poetry_recomporapi.database.fake_db import bd_composteiras
+from API.schemas.composteira_schema import DadosComposteira
+from API.database.fake_db import bd_composteiras
 from uuid import uuid4
 
 router =  APIRouter()
