@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from fastapi.security import OAuth2PasswordRequestForm
-from poetry_recomporapi.routes.composteira_routes import router as composteira_router
-from poetry_recomporapi.routes.compostagem_routes import router as compostagem_router
-from poetry_recomporapi.routes.user_routes import router as user_router
+from API.routes.composteira_routes import router as composteira_router
+from API.routes.compostagem_routes import router as compostagem_router
+from API.routes.user_routes import router as user_router
 
 app = FastAPI(                                 
     title = "Recompor - API",

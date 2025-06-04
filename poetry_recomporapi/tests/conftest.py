@@ -3,8 +3,8 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
-from poetry_recomporapi.main import app
-from poetry_recomporapi.models.User import table_registry
+from API.main import app
+from API.models.User import table_registry
 
 
 @pytest.fixture

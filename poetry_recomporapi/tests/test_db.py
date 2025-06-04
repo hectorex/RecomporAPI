@@ -1,13 +1,22 @@
-from poetry_recomporapi.models.User import User
+from sqlalchemy import select
+from API.models.User import User
 
 def test_create_user(session):
-    user = User(
+    new_user = User(
         username="teste",
         email="teste@teste",
         password="secret"
     )
 
-    session.add(user)
+    session.add(new_user)
     session.commit()
 
-    assert user.username == "teste"
+    user = session.scalar(
+        select(User).where(User.username == "teste") #estudar melhor dps
+    )
+
+    assert user.username == {
+        "username": "test",
+        "email": "test@test",
+        "password": "secret"
+    }
