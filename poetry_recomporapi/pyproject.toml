@@ -3,7 +3,8 @@ name = "poetry-recomporapi"
 version = "0.1.0"
 description = ""
 authors = [
-    {name = "mnzlipe",email = "luizfelipemam2007@gmail.com"}
+    {name = "mnzlipe",email = "luizfelipemam2007@gmail.com"},
+    {name = "Celso Hector",email = "hector.c@estudante.ifro.edu.br"}
 ]
 readme = "README.md"
 requires-python = ">=3.13, <4.0"
