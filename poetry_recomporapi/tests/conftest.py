@@ -22,3 +22,11 @@ def session():
         yield session # 'ta aqui o q vc me pediu'
 
     table_registry.metadata.drop_all(engine)
+
+from sqlalchemy import event
+from API.models import User
+
+def _mock_db_time():
+    def fake_time_hook(mapper, connection, target):
+        ...
+    event.listen(User, "before_insert", fake_time_hook)
