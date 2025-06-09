@@ -2,7 +2,7 @@ from dataclasses import asdict
 from sqlalchemy import select
 from sqlalchemy.orm.session import Session
 from API.models.User import User
-from API.models.compostagens import Compostagem
+from poetry_recomporapi.API.models.compostagem import Compostagem
 from API.models.composteiras import Composteira
 
 def test_create_user(session: Session):
