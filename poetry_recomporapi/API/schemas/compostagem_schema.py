@@ -3,10 +3,14 @@ from datetime import datetime
 
 class DadosCompostagem(BaseModel):
     nome: str
-    data: str
+    data_criacao: str
     peso: float
-    previsao: int
-    
+    previsao: None
+
+    def fazer_previsao(peso):
+        #add cáculo de previsão aqui
+        DadosCompostagem.previsao = "sem previsões por enquanto"
+
     @field_validator('data')
     @classmethod
     def validar_data(cls,data:str):
