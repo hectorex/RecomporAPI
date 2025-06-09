@@ -1,9 +1,9 @@
 from dataclasses import asdict
 from sqlalchemy import select
 from sqlalchemy.orm.session import Session
-from API.models.User import User
+from API.models.user import User
 from poetry_recomporapi.API.models.compostagem import Compostagem
-from API.models.composteiras import Composteira
+from API.models.composteira import Composteira
 
 def test_create_user(session: Session):
     new_user = User(
