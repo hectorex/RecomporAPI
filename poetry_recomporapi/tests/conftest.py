@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
 from API.main import app
-from API.models.User import table_registry
+from API.models.user import table_registry
 
 
 @pytest.fixture
