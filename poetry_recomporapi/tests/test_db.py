@@ -32,7 +32,7 @@ def test_create_user(session: Session):
     #     "username": "teste",
     #     "email": "test@test",
     #     "password": "secret",
-    #     "created_at": isinstance(user.created_at, datetime)
+    #     "created_at": ...
     # }
 
 # def test_create_composteira(session):

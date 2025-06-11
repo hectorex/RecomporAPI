@@ -17,6 +17,6 @@ class Composteira:
     data_criacao: Mapped[str] = mapped_column()
     regiao: Mapped[str] = mapped_column()
     created_at: Mapped[datetime] = mapped_column(
-        init=False, server_default=func.now
+        init=False, server_default=func.now()
     )
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"),init= False)
