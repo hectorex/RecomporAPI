@@ -2,8 +2,9 @@ from dataclasses import asdict
 from sqlalchemy import select
 from sqlalchemy.orm.session import Session
 from API.models.user import User
-from poetry_recomporapi.API.models.compostagem import Compostagem
+from API.models.compostagem import Compostagem
 from API.models.composteira import Composteira
+from datetime import datetime
 
 def test_create_user(session: Session):
     new_user = User(
@@ -15,18 +16,24 @@ def test_create_user(session: Session):
     session.add(new_user)
     session.commit()
 
-    breakpoint()
+    
     user = session.scalar(
         select(User).where(User.username == "teste") #estudar melhor dps
     )
+    breakpoint()
 
-    assert asdict(user) == {
-        "id": 1,
-        "username": "test",
-        "email": "test@test",
-        "password": "secret",
-        "created_at": ...
-    }
+    assert user.id == 1
+    assert user.username == "teste"
+    assert user.email == "teste@teste"
+    assert user.password == "secret"
+    assert isinstance(user.created_at, datetime)
+    # assert asdict(user) == {
+    #     "id": 1,
+    #     "username": "teste",
+    #     "email": "test@test",
+    #     "password": "secret",
+    #     "created_at": isinstance(user.created_at, datetime)
+    # }
 
 # def test_create_composteira(session):
 #     new_composteira
