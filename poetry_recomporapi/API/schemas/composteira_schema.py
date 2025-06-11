@@ -9,11 +9,10 @@ class DadosComposteira(BaseModel):
     data_criacao: str
     regiao: str
 
-    @field_validator('data_criacao')
-    @classmethod
-    def validar_data(cls,data:str):
+    @field_validator('data_criacao', mode='before')
+    def validar_data_criacao(cls, data):
         try:
-            datetime.strptime(data,"%d/%m/%Y")
+            datetime.strptime(data, "%d/%m/%Y")
             return data
         except ValueError:
             raise ValueError("Use o formato DD/MM/YYYY.")
