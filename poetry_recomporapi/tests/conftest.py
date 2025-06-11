@@ -2,10 +2,11 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
-
 from API.main import app
 from API.models.user import table_registry
-
+'''from sqlalchemy import event
+from datetime import datetime
+from contextlib import contextmanager'''
 
 @pytest.fixture
 def client():
@@ -23,10 +24,17 @@ def session():
 
     table_registry.metadata.drop_all(engine)
 
-from sqlalchemy import event
-from API.models import user
-
-def _mock_db_time():
+'''@contextmanager
+def _mock_db_time(model, time=datetime(2025,6,11)): #entender melhor
     def fake_time_hook(mapper, connection, target):
-        ...
-    event.listen(user, "before_insert", fake_time_hook)
+        print(target)
+        breakpoint()
+    event.listen(model, "before_insert", fake_time_hook)
+
+    yield time
+
+    event.remove(model, "before_insert", fake_time_hook)
+
+@pytest.fixture
+def mock_db_time():
+    return _mock_db_time #deu errado essa bomba'''
