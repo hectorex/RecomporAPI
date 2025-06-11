@@ -1,9 +1,8 @@
 from datetime import datetime
-
+from . import table_registry
 from sqlalchemy import func, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column, registry
+from sqlalchemy.orm import Mapped, mapped_column
 
-table_registry = registry()
 @table_registry.mapped_as_dataclass
 class Compostagem:
     __tablename__ = "compostagem"
