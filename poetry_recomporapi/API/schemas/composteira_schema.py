@@ -5,11 +5,11 @@ class DadosComposteira(BaseModel):
     nome: str
     tipo: str
     minhocas: bool
-    local_construcao: str
-    data_criacao: str
+    data_constru: str
     regiao: str
+    tamanho: float
 
-    @field_validator('data_criacao', mode='before')
+    @field_validator('data_constru', mode='before')
     def validar_data_criacao(cls, data):
         try:
             datetime.strptime(data, "%d/%m/%Y")
