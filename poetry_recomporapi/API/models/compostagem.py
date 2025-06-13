@@ -9,7 +9,7 @@ class Compostagem:
 
     id: Mapped[int] = mapped_column(init= False, primary_key=True)
     nome: Mapped[str] = mapped_column()
-    data_criacao: Mapped[str] = mapped_column()
-    peso: Mapped[float] = mapped_column()
-    previsao: Mapped[str] = mapped_column(init= False)
+    data_compostagem: Mapped[str] = mapped_column()
+    quantReduo: Mapped[float] = mapped_column()
+    frequencia: Mapped[str] = mapped_column()
     composteira_id: Mapped[int] = mapped_column(ForeignKey("composteira.id"),init= False)
