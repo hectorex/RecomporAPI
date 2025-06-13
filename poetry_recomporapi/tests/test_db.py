@@ -33,10 +33,10 @@ def test_create_user(session): #Esse user aqui não será acessado pois ele "sum
     assert user.password == "secret"
     assert isinstance(user.created_at, datetime) #consertar o horario dps, tem que usar o horario do db
 
-'''    assert asdict(user) == {
+'''    assert asdict(user) == { #isso aqui vai servir para configurar a hora do db, configurar apos o celso terminar
         "id": 1,
         "username": "teste",
-        "email": "teste@teste",
+        "email": "teste@teste", 
         "password": "secret",
         "created_at": time #esse time vai consertar isso, mas preciso arrumar o conftest
     }'''
