@@ -5,6 +5,7 @@ from API.models.user import User
 from API.models.compostagem import Compostagem
 from API.models.composteira import Composteira
 from datetime import datetime
+from API.schemas.compostagem_schema import calculo_previsao
 
 def test_create(session: Session):
     #create_user
@@ -44,7 +45,7 @@ def test_create(session: Session):
     composteira = session.scalar(
         select(Composteira).where(Composteira.nome == "Compostilson")
     )
-    breakpoint()
+
     assert composteira.id == 1
     assert composteira.tipo == "Terra"
     assert composteira.minhocas == True
@@ -53,3 +54,29 @@ def test_create(session: Session):
     assert composteira.tamanho == 30.0
     assert composteira.user_id == new_user.id
 
+    #create_compostagem
+    new_compostagem = Compostagem(
+        nome="Compostagem Top",
+        data_compostagem="16/06/2025",
+        quantReduo=10.0,
+        frequencia="Diária",
+        previsao= calculo_previsao(10.0),
+        composteira_id= new_composteira.id
+    )
+
+    session.add(new_compostagem)
+    session.commit()
+
+    compostagem =  session.scalar(
+        select(Compostagem).where(Compostagem.nome == "Compostagem Top")
+    )
+
+    
+    breakpoint()
+
+    assert compostagem.id == 1
+    assert compostagem.nome == "Compostagem Top"
+    assert compostagem.data_compostagem == "16/06/2025"
+    assert compostagem.quantReduo == 10.0
+    assert compostagem.previsao == (calculo_previsao(new_compostagem.quantReduo))
+    assert compostagem.composteira_id == new_composteira.id
