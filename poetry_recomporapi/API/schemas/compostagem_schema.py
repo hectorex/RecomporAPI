@@ -11,10 +11,15 @@ class DadosCompostagem(BaseModel):
     data_compostagem: str
     quantReduo: float
     frequencia: str
+    data_compostagem: str
+    quantReduo: float
+    frequencia: str
 
     @field_validator('data_compostagem', mode='before')
     def validar_data(cls, data_compostagem):
         try:
+            datetime.strptime(data_compostagem, "%d/%m/%Y")
+            return data_compostagem
             datetime.strptime(data_compostagem, "%d/%m/%Y")
             return data_compostagem
         except ValueError:
