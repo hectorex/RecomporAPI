@@ -5,9 +5,9 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 @table_registry.mapped_as_dataclass
 class Composteira:
-    __tablename__ = "composteira"
+    __tablename__ = "composteira" #Criando tabela composteira
 
-    id: Mapped[int] = mapped_column(init=False, primary_key=True)
+    id: Mapped[int] = mapped_column(init=False, primary_key=True) #definindo ID como PK
     nome: Mapped[str] = mapped_column()
     tipo: Mapped[str] = mapped_column()
     minhocas: Mapped[bool] = mapped_column()
@@ -17,4 +17,4 @@ class Composteira:
     created_at: Mapped[datetime] = mapped_column(
         init=False, server_default=func.now()
     )
-    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id")) #definindo user_id como FK

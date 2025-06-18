@@ -6,7 +6,7 @@ def calculo_previsao(quantReduo: float) -> int:
         return dias #a cada 500g (0,5kg) leva 1 dia, minimo de 7 dias
         # ele vai retornar isso numa futura rota de post
 
-class DadosCompostagem(BaseModel):
+class DadosCompostagem(BaseModel): #Classe da compostagem
     nome: str
     data_compostagem: str
     quantReduo: float
