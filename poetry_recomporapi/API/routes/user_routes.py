@@ -1,15 +1,14 @@
 from fastapi import APIRouter, HTTPException
 from API.schemas.user_schema import DadosUser, DadosSenha
 from API.database.fake_db import bd_users
-from uuid import uuid4
-from API.segurança import get_password_hash, password_check
+from API.segurança import get_password_hash, password_check, gerando_id
 
 router = APIRouter()
 
 @router.post("/criar_usuario")
 def criar_user(user: DadosUser):
     dados = user.model_dump()
-    dados["id"] = str(uuid4())
+    dados["id"] = gerando_id()
     if password_check(dados["password"]) == False:
         return {"mensagem": "Senha inválida.",
                 "requisitos":"Deve conter de 6 a 20 digítos; "

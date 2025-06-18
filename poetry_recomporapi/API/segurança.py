@@ -1,6 +1,10 @@
 from pwdlib import PasswordHash
+from uuid import uuid4
 
 pwd_context = PasswordHash.recommended()
+
+def gerando_id():
+    return str(uuid4())
 
 def get_password_hash(password: str):
     return pwd_context.hash(password)

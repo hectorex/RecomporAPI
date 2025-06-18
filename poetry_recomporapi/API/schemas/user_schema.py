@@ -8,4 +8,4 @@ class DadosUser(BaseModel): #Classe do user
 class DadosSenha(BaseModel): #Classe da senha
     user_id: str
     nova_senha: str
-    
+        
