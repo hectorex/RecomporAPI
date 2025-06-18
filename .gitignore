@@ -2,3 +2,7 @@
 *.pyc 
 #ignorando arquivos do vscode
 .vscode/
+#coisas do projeto
+database.db
+#env
+.env
