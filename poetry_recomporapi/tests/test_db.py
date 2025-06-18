@@ -6,13 +6,14 @@ from API.models.compostagem import Compostagem
 from API.models.composteira import Composteira
 from datetime import datetime
 from API.schemas.compostagem_schema import calculo_previsao
+from API.segurança import gerando_id
 
 def test_create(session: Session):
     #create_user
     new_user = User( 
         username="Luiz Felipe",
         email="luizfelipemam2007@gmail.com",
-        password="C&L123"
+        password="C&L123",
     )
 
     session.add(new_user)
