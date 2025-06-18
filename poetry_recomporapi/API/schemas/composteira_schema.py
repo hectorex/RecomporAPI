@@ -1,7 +1,7 @@
 from pydantic import BaseModel, field_validator
 from datetime import datetime
 
-class DadosComposteira(BaseModel):
+class DadosComposteira(BaseModel): #Classe da composteira
     nome: str
     tipo: str
     minhocas: bool
