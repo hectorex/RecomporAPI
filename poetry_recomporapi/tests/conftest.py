@@ -3,7 +3,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 from API.main import app
-from API.models.user import table_registry
+from poetry_recomporapi.API.models.user_model import table_registry
 '''from sqlalchemy import event
 from datetime import datetime
 from contextlib import contextmanager'''
