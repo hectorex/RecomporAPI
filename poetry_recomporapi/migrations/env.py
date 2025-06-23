@@ -3,7 +3,7 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from alembic import context
 from API.settings import Settings
-from API.models.user import table_registry
+from poetry_recomporapi.API.models.user_model import table_registry
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
