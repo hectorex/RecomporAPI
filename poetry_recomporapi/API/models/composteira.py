@@ -6,9 +6,8 @@ from uuid import uuid4
 
 @table_registry.mapped_as_dataclass
 class Composteira:
-    __tablename__ = "composteira" #Criando tabela composteira
+    __tablename__ = "composteiras_table" #Criando tabela composteira
 
-    id: Mapped[str] = mapped_column(default=lambda: str(uuid4()), primary_key=True) #definindo ID como PK
     nome: Mapped[str] = mapped_column()
     tipo: Mapped[str] = mapped_column()
     minhocas: Mapped[bool] = mapped_column()
@@ -18,4 +17,7 @@ class Composteira:
     created_at: Mapped[datetime] = mapped_column(
         init=False, server_default=func.now()
     )
-    user_id: Mapped[str] = mapped_column(ForeignKey("user.id")) #definindo user_id como FK
+    user_id: Mapped[str] = mapped_column(ForeignKey("users_table.id")) #definindo user_id como FK
+    id: Mapped[str] = mapped_column(primary_key=True, default_factory=lambda: str(uuid4())) #definindo ID como PK
+    #default_factory:  toda vez que um novo objeto for criado, esse valor será gerado automaticamente
+    #lambda: verifica se o valor gerado (o id) já existe no banco, para não gerar ids iguais
