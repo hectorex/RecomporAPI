@@ -3,7 +3,8 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from alembic import context
 from API.settings import Settings
-from API.models.user_model import table_registry
+from API.models import user_model, composteira, compostagem
+from API.models.table_registry import table_registry
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

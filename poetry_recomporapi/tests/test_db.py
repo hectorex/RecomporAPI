@@ -6,7 +6,6 @@ from API.models.compostagem import Compostagem
 from API.models.composteira import Composteira
 from datetime import datetime
 from API.schemas.compostagem_schema import calculo_previsao
-from API.segurança import gerando_uuid4
 from uuid import UUID
 
 def test_create(session: Session):
