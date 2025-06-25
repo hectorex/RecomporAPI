@@ -1,12 +1,12 @@
 from datetime import datetime
-from . import table_registry
+from .table_registry import table_registry
 from sqlalchemy import func
 from sqlalchemy.orm import Mapped, mapped_column
 
 
 @table_registry.mapped_as_dataclass
 class User:
-    __tablename__ = "user_table" #Criando tabela user
+    __tablename__ = "user" #Criando tabela user
 
     id: Mapped[int] = mapped_column(init=False, primary_key=True) #definindo ID como PK
     username: Mapped[str] = mapped_column(unique=True)
