@@ -25,6 +25,3 @@ def password_check(password: str):
     if any(char in spclCaracs for char in password) == False:
         strong == False
     return strong
-
-def gerando_uuid4():
-    return str(uuid4())
