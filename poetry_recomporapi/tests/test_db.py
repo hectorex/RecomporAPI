@@ -6,6 +6,8 @@ from API.models.compostagem import Compostagem
 from API.models.composteira import Composteira
 from datetime import datetime
 from API.schemas.compostagem_schema import calculo_previsao
+from API.segurança import gerando_uuid4
+from uuid import UUID
 
 def test_create(session: Session):
     #create_user
@@ -22,7 +24,7 @@ def test_create(session: Session):
         select(User).where(User.username == "Luiz Felipe") #estudar melhor dps
     )
     
-    assert user.id == 1
+    UUID(user.id)
     assert user.username == "Luiz Felipe"
     assert user.email == "luizfelipemam2007@gmail.com"
     assert user.password == "C&L123"
@@ -46,7 +48,7 @@ def test_create(session: Session):
         select(Composteira).where(Composteira.nome == "Compostilson")
     )
 
-    assert composteira.id == 1
+    UUID(composteira.id)
     assert composteira.tipo == "Terra"
     assert composteira.minhocas == True
     assert composteira.data_constru == "30/10/2007"
@@ -74,7 +76,7 @@ def test_create(session: Session):
     
     breakpoint()
 
-    assert compostagem.id == 1
+    UUID(compostagem.id)
     assert compostagem.nome == "Compostagem Top"
     assert compostagem.data_compostagem == "16/06/2025"
     assert compostagem.quantReduo == 10.0
