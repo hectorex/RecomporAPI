@@ -5,7 +5,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 @table_registry.mapped_as_dataclass
 class Composteira:
-    __tablename__ = "composteira" #Criando tabela composteira
+    __tablename__ = "composteiras_table" #Criando tabela composteira
 
     id: Mapped[int] = mapped_column(init=False, primary_key=True) #definindo ID como PK
     nome: Mapped[str] = mapped_column()
