@@ -4,5 +4,3 @@
 .vscode/
 #coisas do projeto
 database.db
-#env
-.env
