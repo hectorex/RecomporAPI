@@ -1,7 +1,7 @@
 from dataclasses import asdict
 from sqlalchemy import select
 from sqlalchemy.orm.session import Session
-from poetry_recomporapi.API.models.user_model import User
+from API.models.user_model import User
 from API.models.compostagem import Compostagem
 from API.models.composteira import Composteira
 from datetime import datetime
@@ -27,7 +27,7 @@ def test_create(session: Session):
     assert user.email == "luizfelipemam2007@gmail.com"
     assert user.password == "C&L123"
     assert isinstance(user.created_at, datetime)
-
+    
     #create_composteira
     new_composteira = Composteira( 
         nome="Compostilson",

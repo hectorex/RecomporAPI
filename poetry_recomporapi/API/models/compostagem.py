@@ -1,5 +1,5 @@
 from datetime import datetime
-from . import table_registry
+from .table_registry import table_registry
 from sqlalchemy import func, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 
