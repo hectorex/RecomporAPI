@@ -2,12 +2,13 @@ from datetime import datetime
 from .table_registry import table_registry
 from sqlalchemy import func, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
+from uuid import uuid4
 
 @table_registry.mapped_as_dataclass
 class Composteira:
     __tablename__ = "composteira" #Criando tabela composteira
 
-    id: Mapped[int] = mapped_column(init=False, primary_key=True) #definindo ID como PK
+    id: Mapped[str] = mapped_column(default=lambda: str(uuid4()), primary_key=True) #definindo ID como PK
     nome: Mapped[str] = mapped_column()
     tipo: Mapped[str] = mapped_column()
     minhocas: Mapped[bool] = mapped_column()
@@ -17,4 +18,4 @@ class Composteira:
     created_at: Mapped[datetime] = mapped_column(
         init=False, server_default=func.now()
     )
-    user_id: Mapped[int] = mapped_column(ForeignKey("user.id")) #definindo user_id como FK
+    user_id: Mapped[str] = mapped_column(ForeignKey("user.id")) #definindo user_id como FK
