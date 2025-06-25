@@ -1,4 +1,5 @@
 from pwdlib import PasswordHash
+from uuid import uuid4
 
 pwd_context = PasswordHash.recommended()
 
@@ -24,3 +25,6 @@ def password_check(password: str):
     if any(char in spclCaracs for char in password) == False:
         strong == False
     return strong
+
+def gerando_uuid4():
+    return str(uuid4())
