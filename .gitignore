@@ -3,4 +3,6 @@
 #ignorando arquivos do vscode
 .vscode/
 #coisas do projeto
-database.db
+#database.db ignorar por ora, so vai ser importante quando for uploadado de fato para o github valendo 100% rs
+#.env
+#.env mesma coisa aqui, tirar do comentario o 2o .env e o database.db
