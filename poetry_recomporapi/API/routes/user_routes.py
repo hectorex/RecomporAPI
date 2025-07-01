@@ -26,7 +26,7 @@ def criar_user(user: DadosUser):
         if db_user.username == user.username:
             raise HTTPException(
                 status_code=HTTPStatus.CONFLICT,
-                detail='Username already exists',
+                detail='Username já exite',
             )
         elif db_user.email == user.email:
             raise HTTPException(
@@ -43,20 +43,6 @@ def criar_user(user: DadosUser):
 
     return db_user
 
-    '''dados = user.model_dump()
-    dados["id"] = str(uuid4())
-    if password_check(dados["password"]) == False:
-        return {"mensagem": "Senha inválida.",
-                "requisitos":"Deve conter de 6 a 20 digítos; "
-                             "Deve possuir pelo menos um número;"
-                             "Deve possuir pelo menos uma letra minúscula e uma maiúscula;"
-                             "Deve possuir um caracter especial."
-        } 
-    dados["password"] = get_password_hash(user.password)
-    bd_users.append(dados)
-    return {
-        "mensagem": f"Bem-vindo, {dados["username"]}, {dados["id"]}, {dados['password']}."
-    }'''
 @router.put("/users/{user_id}")
 def edit_user(user_id: str, nova_senha: DadosSenha):
     user = next(((user) for user in bd_users if user_id == user["id"]), None)

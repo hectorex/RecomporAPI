@@ -1,8 +1,8 @@
-"""criação das tabelas users composteira compostagens
+"""create all tables
 
-Revision ID: dd2ffa44f296
+Revision ID: 7a4120fad406
 Revises: 
-Create Date: 2025-06-25 11:04:35.278382
+Create Date: 2025-07-01 10:27:45.408268
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'dd2ffa44f296'
+revision: str = '7a4120fad406'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None

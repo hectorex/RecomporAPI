@@ -8,7 +8,8 @@ class DadosComposteira(BaseModel): #Classe da composteira
     data_constru: str
     regiao: str
     tamanho: float
-
+    user_id: str
+    
     @field_validator('data_constru', mode='before')
     def validar_data_criacao(cls, data):
         try:
