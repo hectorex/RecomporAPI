@@ -11,9 +11,8 @@ class DadosCompostagem(BaseModel): #Classe da compostagem
     data_compostagem: str
     quantReduo: float
     frequencia: str
-    data_compostagem: str
-    quantReduo: float
-    frequencia: str
+    previsao: int
+    composteira_id: str
 
     @field_validator('data_compostagem', mode='before')
     def validar_data(cls, data_compostagem):
