@@ -1,20 +1,17 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from API.schemas.composteira_schema import DadosComposteira
-from API.database.fake_db import bd_composteiras
+#from API.database.fake_db import bd_composteiras
 from uuid import uuid4
-from sqlalchemy.orm import Session
-from API.settings import Settings
-from sqlalchemy import create_engine, select
+from sqlalchemy import select
 from API.models.composteira import Composteira
 from http import HTTPStatus
 from API.models.user_model import User
+from API.database import get_session
 
 router =  APIRouter()
 
 @router.post("/criar_composteira")
-def criar_composteira(user_id: str,composteira: DadosComposteira):
-    engine = create_engine(Settings().DATABASE_URL)
-    session = Session(engine)
+def criar_composteira(user_id: str,composteira: DadosComposteira, session = Depends(get_session)): #criação da session
 
     db_composteira = session.scalar(
         select(Composteira).where(
@@ -22,7 +19,7 @@ def criar_composteira(user_id: str,composteira: DadosComposteira):
         )
     )
 
-    if not db_composteira:
+    if db_composteira:
             raise HTTPException(
                 status_code=HTTPStatus.CONFLICT,
                 detail='Composteira já existe com esse nome.',
@@ -55,11 +52,11 @@ def criar_composteira(user_id: str,composteira: DadosComposteira):
 
     return db_composteira
     
-@router.get("/minhas_composteiras")
+'''@router.get("/minhas_composteiras")
 async def listar_composteiras():
     if len(bd_composteiras) >= 1:
         ret = ((composteira) for composteira in bd_composteiras)
     else:
         ret = {"resposta": "você não tem composteiras criadas."}
 
-    return ret
+    return ret'''

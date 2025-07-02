@@ -1,21 +1,18 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from API.schemas.compostagem_schema import DadosCompostagem
-from API.database.fake_db import bd_compostagens, bd_composteiras
+#from API.database.fake_db import bd_compostagens, bd_composteiras
 from uuid import uuid4
-from sqlalchemy.orm import Session
-from API.settings import Settings
-from sqlalchemy import create_engine, select
+from sqlalchemy import select
 from API.models.compostagem import Compostagem
 from http import HTTPStatus
 from API.models.composteira import Composteira
+from API.database import get_session
 
 
 router =  APIRouter()
 
 @router.post("/minhas_composteiras/{composteira_id}/criar_compostagem") # criar compostagem
-async def criar_compostagem(composteira_id: str, compostagem: DadosCompostagem):
-    engine = create_engine(Settings().DATABASE_URL)
-    session = Session(engine)
+async def criar_compostagem(composteira_id: str, compostagem: DadosCompostagem, session = Depends(get_session)): #criação da session
 
     db_compostagem = session.scalar(
         select(Compostagem).where(
@@ -70,6 +67,6 @@ async def criar_compostagem(composteira_id: str, compostagem: DadosCompostagem):
         "detalhes": dados
     } '''
 
-@router.get("/minhas_composteiras/{composteira_id}/minhas_compostagens")
+'''@router.get("/minhas_composteiras/{composteira_id}/minhas_compostagens")
 async def listar_compostagens():
-    return [(compostagem) for compostagem in bd_compostagens]
+    return [(compostagem) for compostagem in bd_compostagens]'''

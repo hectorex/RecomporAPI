@@ -4,14 +4,21 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 from API.main import app
 from API.models.table_registry import table_registry
+from API.database import get_session
 '''from sqlalchemy import event
 from datetime import datetime
 from contextlib import contextmanager'''
 
-@pytest.fixture
+@pytest.fixture #isso n foi testado tampouco testado
 def client():
-    return TestClient(app)
+    def get_session_overrride():
+        return session
+    
+    with TestClient(app) as client:
+        app.dependency_overrides[get_session] = get_session_overrride
+        yield client
 
+    app.dependency_overrides.clear()
 
 @pytest.fixture
 def session():
