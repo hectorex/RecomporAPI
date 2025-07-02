@@ -1,29 +1,26 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from API.schemas.user_schema import DadosUser, DadosSenha
-from API.database.fake_db import bd_users
+#from API.database.fake_db import bd_users
 from uuid import uuid4
 from API.segurança import get_password_hash, password_check
-from sqlalchemy import create_engine, select
-from sqlalchemy.orm import Session
-from API.settings import Settings
+from sqlalchemy import select
 from API.models.user_model import User
 from http import HTTPStatus
+from API.database import get_session
 
 router = APIRouter()
 
 @router.post("/criar_usuario")
-def criar_user(user: DadosUser):
-    engine = create_engine(Settings().DATABASE_URL)
-    session = Session(engine)
+def criar_user(user: DadosUser, session = Depends(get_session)): #criação da session
 
-    db_user = session.scalar(
+    db_user = session.scalar( #buscando os dados
         select(User).where(
             (User.username == user.username) | (User.email == user.email)
         ) 
     )
 
     if db_user:
-        if db_user.username == user.username:
+        if db_user.username == user.username: #verificação
             raise HTTPException(
                 status_code=HTTPStatus.CONFLICT,
                 detail='Username já exite',
@@ -34,7 +31,7 @@ def criar_user(user: DadosUser):
                 detail='Email already exists',
             )
 
-    db_user = User(
+    db_user = User( #definindo
         username=user.username, password=user.password, email=user.email
     )
     session.add(db_user)
@@ -43,7 +40,7 @@ def criar_user(user: DadosUser):
 
     return db_user
 
-@router.put("/users/{user_id}")
+'''@router.put("/users/{user_id}")
 def edit_user(user_id: str, nova_senha: DadosSenha):
     user = next(((user) for user in bd_users if user_id == user["id"]), None)
     if not user:
@@ -55,7 +52,7 @@ def edit_user(user_id: str, nova_senha: DadosSenha):
 
     return {
         "status": f"senha atualizada com sucesso! senha: {user["password"]}"
-    }
+    }'''
 
 @router.delete("/users/{user_id}")
 def delete_user(user_id: str, senha: str):
