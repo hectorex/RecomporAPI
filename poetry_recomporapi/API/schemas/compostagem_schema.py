@@ -19,8 +19,6 @@ class DadosCompostagem(BaseModel): #Classe da compostagem
         try:
             datetime.strptime(data_compostagem, "%d/%m/%Y")
             return data_compostagem
-            datetime.strptime(data_compostagem, "%d/%m/%Y")
-            return data_compostagem
         except ValueError:
             raise ValueError("Use o formato DD/MM/YYYY.")
         

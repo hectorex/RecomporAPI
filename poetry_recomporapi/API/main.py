@@ -11,10 +11,10 @@ app = FastAPI(
     "O Projeto consiste no desenvolvimento de uma API (Application Programming Interface) para integrar e unificar esses dois sistemas. " \
     "O intuito desse projeto é democratizar o uso dos sistemas, " \
     "permitindo que os usuários acessem o sistema no dispositivo que eles tiverem disponível no momento. Além disso, a API garante melhor segurança dos dados e facilita o processo de atualização dos sistemas.",
-    version = "0.1.0", 
+    version = "pre-alfa", 
     contact = {
         "name": "the developers",
-        "email": "inserir-email-felipe",
+        "email": "luizfelipemam2007@gmail.com",
         "email": "celsohectorhm@gmail.com",
     },
 ) 
@@ -30,7 +30,7 @@ def welcome():
 @app.get("/status")
 def api_status():
     return {"status": "online",
-            "versão": "0.1.1"}
+            "versão": "pre-alfa"}
 
 @app.post("/token")
 def aindaafazer():
