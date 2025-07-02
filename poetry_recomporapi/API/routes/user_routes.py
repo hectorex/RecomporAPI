@@ -28,7 +28,7 @@ def criar_user(user: DadosUser, session = Depends(get_session)): #criação da s
         elif db_user.email == user.email:
             raise HTTPException(
                 status_code=HTTPStatus.CONFLICT,
-                detail='Email already exists',
+                detail='Email já existe',
             )
 
     db_user = User( #definindo
@@ -54,6 +54,7 @@ def edit_user(user_id: str, nova_senha: DadosSenha):
         "status": f"senha atualizada com sucesso! senha: {user["password"]}"
     }'''
 
+#em construção
 @router.delete("/users/{user_id}")
 def delete_user(user_id: str, senha: str):
     pass
