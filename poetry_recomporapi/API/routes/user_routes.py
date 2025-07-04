@@ -4,9 +4,12 @@ from API.schemas.user_schema import DadosUser, DadosSenha
 from uuid import uuid4
 from API.segurança import get_password_hash, password_check
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from API.models.user_model import User
 from http import HTTPStatus
 from API.database import get_session
+from sqlalchemy.orm import Session
+from dataclasses import asdict
 
 router = APIRouter()
 
@@ -40,21 +43,44 @@ def criar_user(user: DadosUser, session = Depends(get_session)): #criação da s
 
     return db_user
 
-'''@router.put("/users/{user_id}")
-def edit_user(user_id: str, nova_senha: DadosSenha):
-    user = next(((user) for user in bd_users if user_id == user["id"]), None)
-    if not user:
-        return HTTPException(status_code= 404, detail="O usuário em questão não foi encontrado.")
-    elif nova_senha == user["password"]:
-        return HTTPException(status_code= 400, detail="Senha em uso.")
+@router.get('/usuarios/') #listar os usuarios
+def read_users(limit: int = 10, offset: int = 0, session: Session = Depends(get_session)):
+    users = list(session.scalars(select(User).limit(limit).offset(offset)))
+    return {"users_table": [asdict(user) for user in users]}
+
+
+@router.put("/users/{user_id}") #editar um usuario ja existente
+def update_user(user_id: str, user: DadosUser, session: Session = Depends(get_session)):
+    db_user = session.scalar(select(User).where(User.id == user_id))
+
+    if not db_user:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Usuário não encontrado.")
+
+    try:
+        db_user.email = user.email
+        db_user.username = user.username
+        db_user.password = user.password
+
+        session.add(db_user)
+        session.commit()
+        session.refresh(db_user)
+        
+        return db_user
     
-    user["password"] = nova_senha #corrigir o hash dps
+    except IntegrityError:
+        raise HTTPException(
+                status_code=HTTPStatus.CONFLICT,
+                detail='Username ou Email já existem.',
+            )
 
-    return {
-        "status": f"senha atualizada com sucesso! senha: {user["password"]}"
-    }'''
+@router.delete("/users/{user_id}") #deletar do espaço-tempo um user
+def update_user(user_id: str, user: DadosUser, session: Session = Depends(get_session)):
+    db_user = session.scalar(select(User).where(User.id == user_id))
 
-#em construção
-@router.delete("/users/{user_id}")
-def delete_user(user_id: str, senha: str):
-    pass
+    if not db_user:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Usuário não encontrado.")
+    
+    session.delete(db_user)
+    session.commit()
+
+    return{'message': 'Usuário deletado.'}
