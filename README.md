@@ -79,6 +79,49 @@ Criação de uma nova compostagem.
 | `id`   | `string` | **Primary Key** , init= False        |
 #### return **Compostagem**
 
+
+## Rodando os testes localmente
+
+**Comandos**
+
+Se ainda precisar criar as tabelas do banco de dados, rode
+
+```bash
+  alembic --autogenerate -m "create tables"
+```
+```bash
+  alembic upgrade head
+```
+
+Com as tabelas criadas, vá para a pasta "poetry_recomporapi"
+```bash
+  cd .\poetry_recomporapi\
+```
+
+Após isso, inicie a aplicação
+
+```bash
+uvicorn API.main:app
+```
+
+Agora, para testar o banco de dados, crie um **novo terminal** (com a aplicação ainda rodando no outro) e vá novamente para a **pasta "poetry_recomporapi"**, com o comando apresentado acima.
+Em seguida, rode
+```bash
+  python -m sqlite3 database.db
+```
+Pronto, já podemos fazer requisições para o banco
+```bash
+select * from {nome da tabela};
+```
+**obs. 1:** O atual nome da tabela de users, composteira e compostagem, respectivamente são "users_table", "composteiras_table" e "compostagens_table".
+
+**obs. 2:** Não se esqueça do ponto e vírgula, se não a saída será "...".
+
+Para sair, use 
+```bash
+.quit
+```
+
 ## Autores
 
 #### Desenvolvedores
@@ -92,3 +135,4 @@ Willians Pereira- [@twillpear](https://github.com/willpear)
 Daniela Toda - [@danielatoda](https://github.com/danielatoda)
 
 Camila Serrão - [@teachercamila](https://github.com/teachercamila)
+
