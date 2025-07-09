@@ -1,8 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
 from API.schemas.user_schema import DadosUser, DadosSenha
-#from API.database.fake_db import bd_users
 from uuid import uuid4
-from API.segurança import get_password_hash, password_check
+from API.security import get_password_hash, password_check
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from API.models.user_model import User
@@ -35,7 +34,7 @@ def criar_user(user: DadosUser, session = Depends(get_session)): #criação da s
             )
 
     db_user = User( #definindo
-        username=user.username, password=user.password, email=user.email
+        username=user.username, password=get_password_hash(user.password), email=user.email
     )
     session.add(db_user)
     session.commit()
@@ -59,7 +58,7 @@ def update_user(user_id: str, user: DadosUser, session: Session = Depends(get_se
     try:
         db_user.email = user.email
         db_user.username = user.username
-        db_user.password = user.password
+        db_user.password = get_password_hash(user.password)
 
         session.add(db_user)
         session.commit()
