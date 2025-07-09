@@ -12,7 +12,7 @@ def verify_password(plain_password: str, hashed_password: str):
 def password_check(password: str):
     spclCaracs = ["!","@","#","$","%","&","*"]
     strong = True
-    if len(password) < 6:
+    if len(password) < 6: 
         strong = False
     if len(password) > 20:
         strong = False
@@ -23,5 +23,5 @@ def password_check(password: str):
     if any(char.islower() for char in password) == False:
         strong = False
     if any(char in spclCaracs for char in password) == False:
-        strong == False
+        strong = False
     return strong

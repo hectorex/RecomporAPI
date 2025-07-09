@@ -7,33 +7,43 @@ from sqlalchemy import select
 from API.models.user_model import User
 from http import HTTPStatus
 from API.database import get_session
-
 router = APIRouter()
 
 @router.post("/criar_usuario")
 def criar_user(user: DadosUser, session = Depends(get_session)): #criação da session
 
+    if not password_check(user.password): #verificando segurança da senha
+        raise HTTPException(
+            status_code=400,
+            detail="A senha deve: ter mais que 6 caracteres; " \
+                "pelo menos um número; " \
+                "pelo menos uma letra maiúscula e uma minúscula; " \
+                "pelo menos um caracter especial.",
+            )
     db_user = session.scalar( #buscando os dados
         select(User).where(
             (User.username == user.username) | (User.email == user.email)
         ) 
     )
 
-    if db_user:
-        if db_user.username == user.username: #verificação
+    if db_user:  #se tiver user com mesmo nome ou email:
+        if db_user.username == user.username: #verificação se já existe o usarname
             raise HTTPException(
                 status_code=HTTPStatus.CONFLICT,
-                detail='Username já exite',
+                detail="Username já exite",
             )
-        elif db_user.email == user.email:
+        if db_user.email == user.email: #verificação se já existe o email
             raise HTTPException(
                 status_code=HTTPStatus.CONFLICT,
-                detail='Email já existe',
+                detail="Email já existe",
             )
 
+
     db_user = User( #definindo
-        username=user.username, password=user.password, email=user.email
-    )
+        username=user.username, 
+        password=get_password_hash(user.password),  #enviando password hasheado
+        email=user.email
+    ) #hashear a senha depois após o final dos testes getpasswordhase(user.password)
     session.add(db_user)
     session.commit()
     session.refresh(db_user)
