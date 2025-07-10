@@ -1,7 +1,8 @@
 from fastapi import APIRouter, HTTPException, Depends
+from fastapi.security import OAuth2PasswordRequestForm
 from API.schemas.user_schema import DadosUser, DadosSenha
 from uuid import uuid4
-from API.security import get_password_hash, password_check
+from API.security import get_password_hash, password_check, verify_password
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from API.models.user_model import User
@@ -41,7 +42,7 @@ def criar_user(user: DadosUser, session = Depends(get_session)): #criação da s
     session.refresh(db_user)
 
     return db_user
-
+#eu amo o celso
 @router.get('/usuarios/') #listar os usuarios
 def read_users(limit: int = 10, offset: int = 0, session: Session = Depends(get_session)):
     users = list(session.scalars(select(User).limit(limit).offset(offset)))
@@ -83,3 +84,24 @@ def update_user(user_id: str, user: DadosUser, session: Session = Depends(get_se
     session.commit()
 
     return{'message': 'Usuário deletado.'}
+
+@router.post("/token/") #autenticação e autorização de usuários / pode ser usado '/login' tb
+def login_for_access_token(
+    form_data: OAuth2PasswordRequestForm = Depends(), #dunossauro disse: 'é estranho mesmo!'
+    session: Session = Depends(get_session)
+):
+    db_user = session.scalar(
+        select(User).where(User.username == form_data.username)
+    )
+
+    if not db_user:
+        raise HTTPException(
+            status_code=HTTPStatus.UNAUTHORIZED,
+            detail="Email ou senha incorretos."
+        )
+
+    if not verify_password(form_data.password, db_user.password):
+        raise HTTPException(
+            status_code=HTTPStatus.UNAUTHORIZED,
+            detail="Email ou senha incorretos."
+        )
