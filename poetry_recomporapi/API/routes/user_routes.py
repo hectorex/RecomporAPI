@@ -43,7 +43,7 @@ def criar_user(user: DadosUser, session = Depends(get_session)): #criação da s
         username=user.username, 
         password=get_password_hash(user.password),  #enviando password hasheado
         email=user.email
-    ) #hashear a senha depois após o final dos testes getpasswordhase(user.password)
+    ) 
     session.add(db_user)
     session.commit()
     session.refresh(db_user)

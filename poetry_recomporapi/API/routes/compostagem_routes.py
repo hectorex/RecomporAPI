@@ -7,6 +7,7 @@ from API.models.compostagem import Compostagem
 from http import HTTPStatus
 from API.models.composteira import Composteira
 from API.database import get_session
+from datetime import datetime
 
 
 router =  APIRouter()
