@@ -1,5 +1,6 @@
 from pydantic import BaseModel, field_validator
 from datetime import datetime
+from fastapi import HTTPException
 
 def calculo_previsao(quantReduo: float) -> int:
         dias = int(quantReduo / 0.5)
@@ -15,11 +16,17 @@ class DadosCompostagem(BaseModel): #Classe da compostagem
     composteira_id: str
 
     @field_validator('data_compostagem', mode='before')
-    def validar_data(cls, data_compostagem):
+    def validar_data_criacao(cls, data):
         try:
-            datetime.strptime(data_compostagem, "%d/%m/%Y")
-            return data_compostagem
+            data_verificando = datetime.strptime(data, "%d-%m-%Y")
         except ValueError:
-            raise ValueError("Use o formato DD/MM/YYYY.")
-        
+            raise HTTPException(
+                status_code=400,
+                detail="Use o formato DD-MM-YYYY.")
+        today_date = datetime.today()
+        if data_verificando > today_date:  #data recebida é posterior a data de hj (impossível)
+            raise HTTPException(
+                    status_code=400,
+                    detail="Data posterior a de hoje.")
+        return data
     
