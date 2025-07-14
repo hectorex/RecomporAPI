@@ -15,6 +15,13 @@ router =  APIRouter()
 @router.post("/minhas_composteiras/{composteira_id}/criar_compostagem") # criar compostagem
 async def criar_compostagem(composteira_id: str, compostagem: DadosCompostagem, session = Depends(get_session)): #criação da session
 
+
+    if compostagem.frequencia.capitalize() not in ["Diaria","Semanal","Mensal"]:
+        raise HTTPException( #verificando a frequencia é válida
+            status_code=400, 
+            detail="Valor inválido. Insira: Diaria, Semanal ou Mensal (sem acentos)."
+            )
+        
     db_compostagem = session.scalar(
         select(Compostagem).where(
             (Compostagem.nome == compostagem.nome )
