@@ -28,7 +28,11 @@ def criar_composteira(user_id: str,composteira: DadosComposteira, session = Depe
     #         detail="A inserção é inválida, insira True para sim e False para não"
     #     )
     
-
+    if len(composteira.nome) < 3 and composteira.nome != "   ":
+        raise HTTPException(
+            status_code=400,
+            detail="Valor inválido. Insira: um valor com pelo menos 3 caracteres. Não insira: 3 espaços em branco."
+        )
     if composteira.tamanho <= 0: #verificando se o tamanho é válido
         raise HTTPException(
             status_code=400,
