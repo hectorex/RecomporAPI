@@ -3,6 +3,7 @@ from API.schemas.compostagem_schema import DadosCompostagem
 #from API.database.fake_db import bd_compostagens, bd_composteiras
 from uuid import uuid4
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from API.models.compostagem import Compostagem
 from http import HTTPStatus
 from API.models.composteira import Composteira
@@ -73,27 +74,49 @@ def get_compostagens(limit: int = 10, offset: int = 0, session: Session = Depend
     compostagens = list(session.scalars(select(Compostagem).limit(limit).offset(offset)))
     return {"compostagens_table": [asdict(c) for c in compostagens]}
 
-'''
-    composteira = next(((composteira) for composteira in bd_composteiras if composteira["id"] == composteira_id), None)
-    # Procuramos a primeira composteira cujo ID bate com o fornecido; se não houver, retornamos None
-    if composteira:
-        raise HTTPException(status_code=404, detail="A composteira em questão não foi encontrada.")
+@router.delete("/minhas_composteiras/{composteira_id}/minhas_compostagens/{id}") #deletar do espaço-tempo uma compostagem
+def delete_composteira(id: str, session: Session = Depends(get_session)):
+    db_compostagem = session.scalar(select(Compostagem).where(Compostagem.id == id))
+
+    if not db_compostagem:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Compostagem não encontrada.")
     
-    dados = compostagem.model_dump()
+    session.delete(db_compostagem)
+    session.commit()
 
-    frequencia_valida = {"diária", "semanal", "mensal"}
-    if dados["frequencia"].lower() not in frequencia_valida:
-        raise HTTPException(status_code=400, detail="Frequência inválida - escreva: 'diária', 'semanal' ou 'mensal'.")
+    return{'message': 'Compostagem deletada.'}
 
-    dados["id"] = str(uuid4())
-    dados["composteira_id"] = composteira_id
-    bd_compostagens.append(dados)
 
-    return{
-        "mensagem": f"Compostagem adicionada à composteira '{composteira['nome']}'.",
-        "detalhes": dados
-    } '''
+@router.put("/minhas_composteiras/{composteira_id}/minhas_compostagens/{id}") #editar uma composteira ja existente
+def update_compostagem(id: str, compostagem: DadosCompostagem, session: Session = Depends(get_session)):
+    db_compostagem = session.scalar(select(Compostagem).where(Compostagem.id == id))
 
-'''@router.get("/minhas_composteiras/{composteira_id}/minhas_compostagens")
-async def listar_compostagens():
-    return [(compostagem) for compostagem in bd_compostagens]'''
+    if compostagem.frequencia.capitalize() not in ["Diaria","Semanal","Mensal"]:
+        raise HTTPException( #verificando se frequencia é válida
+            status_code=400, 
+            detail="Valor inválido. Insira: Diaria, Semanal ou Mensal (sem acento)."
+            )    
+
+    if not db_compostagem:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Compostagem não encontrada.")
+
+    try:
+        db_compostagem.nome = compostagem.nome
+        db_compostagem.data_compostagem = compostagem.data_compostagem
+        db_compostagem.quantReduo = compostagem.quantReduo
+        db_compostagem.frequencia = compostagem.frequencia
+        db_compostagem.previsao = compostagem.previsao
+
+
+
+        session.add(db_compostagem)
+        session.commit()
+        session.refresh(db_compostagem)
+        
+        return db_compostagem
+    
+    except IntegrityError:
+        raise HTTPException(
+                status_code=HTTPStatus.CONFLICT,
+                detail='Compostagem já existente.',
+            )
