@@ -3,6 +3,7 @@ from API.schemas.composteira_schema import DadosComposteira
 #from API.database.fake_db import bd_composteiras
 from uuid import uuid4
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from API.models.composteira import Composteira
 from http import HTTPStatus
 from API.models.user_model import User
@@ -84,3 +85,44 @@ def criar_composteira(user_id: str,composteira: DadosComposteira, session = Depe
 def get_composteiras(limit: int = 10, offset: int = 0, session: Session = Depends(get_session)):
     composteiras = list(session.scalars(select(Composteira).limit(limit).offset(offset)))
     return {"composteiras_table": [asdict(c) for c in composteiras]}
+
+@router.delete("/minhas_composteiras/delete/{id}") #deletar do espaço-tempo uma composteira
+def delete_composteira(id: str, session: Session = Depends(get_session)):
+    db_composteira = session.scalar(select(Composteira).where(Composteira.id == id))
+
+    if not db_composteira:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Composteira não encontrada.")
+    
+    session.delete(db_composteira)
+    session.commit()
+
+    return{'message': 'Composteira deletada.'}
+
+
+@router.put("/minhas_composteiras/{id}") #editar uma composteira ja existente
+def update_composteira(id: str, composteira: DadosComposteira, session: Session = Depends(get_session)):
+    db_composteira = session.scalar(select(Composteira).where(Composteira.id == id))
+
+    if not db_composteira:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Composteira não encontrada.")
+
+    try:
+        db_composteira.nome = composteira.nome
+        db_composteira.tipo = composteira.tipo
+        db_composteira.minhocas = composteira.minhocas
+        db_composteira.data_constru = composteira.data_constru
+        db_composteira.regiao = composteira.regiao
+        db_composteira.tamanho = composteira.tamanho
+
+
+        session.add(db_composteira)
+        session.commit()
+        session.refresh(db_composteira)
+        
+        return db_composteira
+    
+    except IntegrityError:
+        raise HTTPException(
+                status_code=HTTPStatus.CONFLICT,
+                detail='Composteira já existente.',
+            )

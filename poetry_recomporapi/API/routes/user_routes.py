@@ -81,8 +81,8 @@ def update_user(user_id: str, user: DadosUser, session: Session = Depends(get_se
                 detail='Username ou Email já existem.',
             )
 
-@router.delete("/users/{user_id}") #deletar do espaço-tempo um user
-def update_user(user_id: str, user: DadosUser, session: Session = Depends(get_session)):
+@router.delete("/users/delete/{user_id}") #deletar do espaço-tempo um user
+def delete_user(user_id: str, session: Session = Depends(get_session)):
     db_user = session.scalar(select(User).where(User.id == user_id))
 
     if not db_user:
