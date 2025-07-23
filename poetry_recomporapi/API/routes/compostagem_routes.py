@@ -7,6 +7,8 @@ from API.models.compostagem import Compostagem
 from http import HTTPStatus
 from API.models.composteira import Composteira
 from API.database import get_session
+from dataclasses import asdict
+from sqlalchemy.orm import Session
 from datetime import datetime
 
 
@@ -65,6 +67,12 @@ async def criar_compostagem(composteira_id: str, compostagem: DadosCompostagem, 
     session.commit()
     session.refresh(db_compostagem)
     return db_compostagem
+
+@router.get('/minhas_composteiras/{composteira_id}/minhas_compostagens')
+def get_compostagens(limit: int = 10, offset: int = 0, session: Session = Depends(get_session)):
+    compostagens = list(session.scalars(select(Compostagem).limit(limit).offset(offset)))
+    return {"compostagens_table": [asdict(c) for c in compostagens]}
+
 '''
     composteira = next(((composteira) for composteira in bd_composteiras if composteira["id"] == composteira_id), None)
     # Procuramos a primeira composteira cujo ID bate com o fornecido; se não houver, retornamos None

@@ -7,6 +7,8 @@ from API.models.composteira import Composteira
 from http import HTTPStatus
 from API.models.user_model import User
 from API.database import get_session
+from dataclasses import asdict
+from sqlalchemy.orm import Session
 
 router =  APIRouter()
 
@@ -78,11 +80,7 @@ def criar_composteira(user_id: str,composteira: DadosComposteira, session = Depe
 
     return db_composteira
     
-'''@router.get("/minhas_composteiras")
-async def listar_composteiras():
-    if len(bd_composteiras) >= 1:
-        ret = ((composteira) for composteira in bd_composteiras)
-    else:
-        ret = {"resposta": "você não tem composteiras criadas."}
-
-    return ret'''
+@router.get('/minhas_composteiras/')
+def get_composteiras(limit: int = 10, offset: int = 0, session: Session = Depends(get_session)):
+    composteiras = list(session.scalars(select(Composteira).limit(limit).offset(offset)))
+    return {"composteiras_table": [asdict(c) for c in composteiras]}
