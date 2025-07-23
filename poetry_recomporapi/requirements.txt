@@ -8,3 +8,4 @@ alembic>=1.16.2
 python-dotenv>=1.1.0
 httpx>=0.28.1
 requests>=2.32.3
+email-validator
