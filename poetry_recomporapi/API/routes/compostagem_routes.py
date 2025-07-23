@@ -15,6 +15,12 @@ router =  APIRouter()
 @router.post("/minhas_composteiras/{composteira_id}/criar_compostagem") # criar compostagem
 async def criar_compostagem(composteira_id: str, compostagem: DadosCompostagem, session = Depends(get_session)): #criação da session
 
+    if len(compostagem.nome) < 3 and compostagem.nome != "   ":
+        raise HTTPException(
+            status_code=400,
+            detail="Valor inválido. Insira: um valor com pelo menos 3 caracteres."
+        )
+    
     if not compostagem.quantReduo > 0:
         raise HTTPException( #verificando se a quantReduo possui valor válido
             status_code=400,
