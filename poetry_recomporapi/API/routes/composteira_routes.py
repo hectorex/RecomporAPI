@@ -1,15 +1,18 @@
-from fastapi import APIRouter, HTTPException, Depends
-from API.schemas.composteira_schema import DadosComposteira
-#from API.database.fake_db import bd_composteiras
 from uuid import uuid4
+from http import HTTPStatus
+from dataclasses import asdict
+
+from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
-from API.models.composteira import Composteira
-from http import HTTPStatus
-from API.models.user_model import User
-from API.database import get_session
-from dataclasses import asdict
 from sqlalchemy.orm import Session
+
+from API.database import get_session
+from API.models.composteira import Composteira
+from API.models.user_model import User
+from API.schemas.composteira_schema import DadosComposteira
+# from API.database.fake_db import bd_composteiras
+
 
 router =  APIRouter()
 

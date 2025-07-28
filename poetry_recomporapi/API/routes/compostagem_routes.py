@@ -1,16 +1,19 @@
-from fastapi import APIRouter, HTTPException, Depends
-from API.schemas.compostagem_schema import DadosCompostagem
-#from API.database.fake_db import bd_compostagens, bd_composteiras
 from uuid import uuid4
+from http import HTTPStatus
+from datetime import datetime
+from dataclasses import asdict
+
+from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
-from API.models.compostagem import Compostagem
-from http import HTTPStatus
-from API.models.composteira import Composteira
-from API.database import get_session
-from dataclasses import asdict
 from sqlalchemy.orm import Session
-from datetime import datetime
+
+from API.database import get_session
+from API.models.compostagem import Compostagem
+from API.models.composteira import Composteira
+from API.schemas.compostagem_schema import DadosCompostagem
+# from API.database.fake_db import bd_compostagens, bd_composteiras
+
 
 
 router =  APIRouter()
@@ -75,7 +78,7 @@ def get_compostagens(limit: int = 10, offset: int = 0, session: Session = Depend
     return {"compostagens_table": [asdict(c) for c in compostagens]}
 
 @router.delete("/minhas_composteiras/{composteira_id}/minhas_compostagens/{id}") #deletar do espaço-tempo uma compostagem
-def delete_composteira(id: str, session: Session = Depends(get_session)):
+def delete_compostagem(id: str, session: Session = Depends(get_session)):
     db_compostagem = session.scalar(select(Compostagem).where(Compostagem.id == id))
 
     if not db_compostagem:
