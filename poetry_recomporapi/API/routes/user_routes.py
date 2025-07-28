@@ -1,15 +1,20 @@
+from uuid import uuid4
+from http import HTTPStatus
+from dataclasses import asdict
+
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.security import OAuth2PasswordRequestForm
-from API.schemas.user_schema import DadosUser, DadosSenha
-from uuid import uuid4
-from API.security import get_password_hash, password_check, verify_password
+
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
-from API.models.user_model import User
-from http import HTTPStatus
-from API.database import get_session
 from sqlalchemy.orm import Session
-from dataclasses import asdict
+
+from API.database import get_session
+from API.models.user_model import User
+from API.schemas.user_schema import DadosUser, DadosSenha
+from API.schemas.token_schema import Token
+from API.security import get_password_hash, password_check, verify_password
+
 router = APIRouter()
 
 @router.post("/criar_usuario")
@@ -93,7 +98,7 @@ def delete_user(user_id: str, session: Session = Depends(get_session)):
 
     return{'message': 'Usuário deletado.'}
 
-@router.post("/token/") #autenticação e autorização de usuários / pode ser usado '/login' tb
+@router.post("/token/", response_model=Token) #autenticação e autorização de usuários / pode ser usado '/login' tb
 def login_for_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(), #dunossauro disse: 'é estranho mesmo!'
     session: Session = Depends(get_session)
