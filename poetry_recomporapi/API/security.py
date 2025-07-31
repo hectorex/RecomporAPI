@@ -1,6 +1,11 @@
 from pwdlib import PasswordHash
 from uuid import uuid4
 
+#provisório
+SECRET_KEY = "..."
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
 pwd_context = PasswordHash.recommended()
 
 def get_password_hash(password: str):
@@ -10,7 +15,7 @@ def verify_password(plain_password: str, hashed_password: str):
     return pwd_context.verify(plain_password, hashed_password)
 
 def create_access_token(data: dict):
-    ...
+    to_encode = data.copy
 
 def password_check(password: str):
     spclCaracs = ["!","@","#","$","%","&","*"]
