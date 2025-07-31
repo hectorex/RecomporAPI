@@ -72,7 +72,7 @@ async def criar_compostagem(composteira_id: str, compostagem: DadosCompostagem, 
     session.refresh(db_compostagem)
     return db_compostagem
 
-@router.get('/minhas_composteiras/{composteira_id}/minhas_compostagens')
+@router.get('/minhas_composteiras/{composteira_id}/minhas_compostagens') #listando compostagens
 def get_compostagens(limit: int = 10, offset: int = 0, session: Session = Depends(get_session)):
     compostagens = list(session.scalars(select(Compostagem).limit(limit).offset(offset)))
     return {"compostagens_table": [asdict(c) for c in compostagens]}
