@@ -59,7 +59,10 @@ def criar_user(user: DadosUser, session = Depends(get_session)): #criação da s
 @router.get('/usuarios/') #listar os usuarios
 def read_users(limit: int = 10, offset: int = 0, session: Session = Depends(get_session)):
     users = list(session.scalars(select(User).limit(limit).offset(offset)))
-    return {"users_table": [asdict(user) for user in users]}
+    if len(users) == 0:
+        return {"message": "Nenhum usuário encontrado."}
+    else:
+        return {"users_table": [asdict(user) for user in users]}
 
 
 @router.put("/users/{user_id}") #editar um usuario ja existente
