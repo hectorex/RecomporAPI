@@ -111,6 +111,29 @@ def update_composteira(id: str, composteira: DadosComposteira, session: Session 
 
     if not db_composteira:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Composteira não encontrada.")
+    
+    if len(composteira.nome) < 3 and composteira.nome != "   ":
+        raise HTTPException(
+            status_code=400,
+            detail="Valor inválido. Insira: um valor com pelo menos 3 caracteres. Não insira: 3 espaços em branco."
+        )
+    if composteira.tamanho <= 0: #verificando se o tamanho é válido
+        raise HTTPException(
+            status_code=400,
+            detail="O tamanho inserido é inválido, insira um número maior que 0."
+        )
+
+    db_composteira = session.scalar( #consultando se tem uma composteira com mesmo nome no banco
+        select(Composteira).where(
+            (Composteira.nome == composteira.nome)
+        )
+    )
+
+    if db_composteira:
+        raise HTTPException(
+            status_code=HTTPStatus.CONFLICT,
+            detail='Composteira já existe com esse nome.',
+            )
 
     try:
         db_composteira.nome = composteira.nome
