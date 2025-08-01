@@ -71,11 +71,27 @@ async def criar_compostagem(composteira_id: str, compostagem: DadosCompostagem, 
 
     return db_compostagem
 
+@router.get('/minhas_composteiras/{composteira_id}/minhas_compostagens/{compostagem_id}')
+def exibir_Compostagem(compostagem_id: str, session: Session = Depends(get_session)):
+    db_compostagem = session.scalar(select(Compostagem).where(Compostagem.id == compostagem_id))
+
+    if not db_compostagem:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Compostagem não encontrada.")
+    
+    compostagem = session.scalar(
+    select(Compostagem).where(
+        (Compostagem.id == compostagem_id)
+        )
+    )
+    
+    return compostagem
+
+
 @router.get('/minhas_composteiras/{composteira_id}/minhas_compostagens') #listando compostagens
 def exibir_compostagens(limit: int = 10, offset: int = 0, session: Session = Depends(get_session)):
     compostagens = list(session.scalars(select(Compostagem).limit(limit).offset(offset)))
     if len(compostagens) == 0: #verificando se a tabela de compostagens está vazia
-        return {"message": "Nenhuma composteira encontrada."}
+        return {"message": "Nenhuma compostagem encontrada."}
     else:
         return {"compostagens_table": [asdict(c) for c in compostagens]}
 
