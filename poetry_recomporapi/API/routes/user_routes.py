@@ -13,13 +13,18 @@ from API.database import get_session
 from API.models.user_model import User
 from API.schemas.user_schema import DadosUser, DadosSenha
 from API.schemas.token_schema import Token
-from API.security import get_password_hash, password_check, verify_password
+from API.security import get_password_hash, password_check, verify_password, username_check
 
 router = APIRouter()
 
 @router.post("/criar_usuario")
 def criar_user(user: DadosUser, session = Depends(get_session)): #criação da session
 
+    if not username_check(user.username): #verificando o usarname
+        raise HTTPException(
+            status_code=400,
+            detail="O username deve ter pelo menos cinco caracteres; Deve começar com uma letra e deve conter somente letras e números (sem espaços e caracteres especiais)."
+        )
     if not password_check(user.password): #verificando segurança da senha
         raise HTTPException(
             status_code=400,
@@ -59,7 +64,7 @@ def criar_user(user: DadosUser, session = Depends(get_session)): #criação da s
 @router.get('/usuarios/') #listar os usuarios
 def read_users(limit: int = 10, offset: int = 0, session: Session = Depends(get_session)):
     users = list(session.scalars(select(User).limit(limit).offset(offset)))
-    if len(users) == 0:
+    if len(users) == 0: #verificando se a tabela de users está vazia
         return {"message": "Nenhum usuário encontrado."}
     else:
         return {"users_table": [asdict(user) for user in users]}
