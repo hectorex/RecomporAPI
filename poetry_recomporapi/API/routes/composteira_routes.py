@@ -87,7 +87,10 @@ def criar_composteira(user_id: str,composteira: DadosComposteira, session = Depe
 @router.get('/minhas_composteiras/')
 def get_composteiras(limit: int = 10, offset: int = 0, session: Session = Depends(get_session)):
     composteiras = list(session.scalars(select(Composteira).limit(limit).offset(offset)))
-    return {"composteiras_table": [asdict(c) for c in composteiras]}
+    if len(composteiras) == 0:
+        return {"message": "Nenhuma composteira encontrada."}
+    else:
+        return {"composteiras_table": [asdict(c) for c in composteiras]}
 
 @router.delete("/minhas_composteiras/delete/{id}") #deletar do espaço-tempo uma composteira
 def delete_composteira(id: str, session: Session = Depends(get_session)):

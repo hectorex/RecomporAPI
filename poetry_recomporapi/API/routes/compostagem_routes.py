@@ -75,7 +75,10 @@ async def criar_compostagem(composteira_id: str, compostagem: DadosCompostagem, 
 @router.get('/minhas_composteiras/{composteira_id}/minhas_compostagens') #listando compostagens
 def get_compostagens(limit: int = 10, offset: int = 0, session: Session = Depends(get_session)):
     compostagens = list(session.scalars(select(Compostagem).limit(limit).offset(offset)))
-    return {"compostagens_table": [asdict(c) for c in compostagens]}
+    if len(compostagens) == 0:
+        return {"message": "Nenhuma composteira encontrada."}
+    else:
+        return {"compostagens_table": [asdict(c) for c in compostagens]}
 
 @router.delete("/minhas_composteiras/{composteira_id}/minhas_compostagens/{id}") #deletar do espaço-tempo uma compostagem
 def delete_compostagem(id: str, session: Session = Depends(get_session)):
