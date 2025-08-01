@@ -74,12 +74,12 @@ def exibir_user(user_id: str, session: Session = Depends(get_session)):
         (User.id == user_id)
         )
     )
-    
+
     return user
 
 
 @router.get("/users/") #listar os usuarios
-def read_users(limit: int = 10, offset: int = 0, session: Session = Depends(get_session)):
+def exibir_users(limit: int = 10, offset: int = 0, session: Session = Depends(get_session)):
     users = list(session.scalars(select(User).limit(limit).offset(offset)))
     if len(users) == 0: #verificando se a tabela de users está vazia
         return {"message": "Nenhum usuário encontrado."}
@@ -88,7 +88,7 @@ def read_users(limit: int = 10, offset: int = 0, session: Session = Depends(get_
 
 
 @router.put("/users/{user_id}") #editar um usuario ja existente
-def update_user(user_id: str, user: DadosUser, session: Session = Depends(get_session)):
+def atualizar_user(user_id: str, user: DadosUser, session: Session = Depends(get_session)):
     db_user = session.scalar(select(User).where(User.id == user_id))
 
     if not db_user:
@@ -112,7 +112,7 @@ def update_user(user_id: str, user: DadosUser, session: Session = Depends(get_se
             )
 
 @router.delete("/users/delete/{user_id}") #deletar do espaço-tempo um user
-def delete_user(user_id: str, session: Session = Depends(get_session)):
+def deletar_user(user_id: str, session: Session = Depends(get_session)):
     db_user = session.scalar(select(User).where(User.id == user_id))
 
     if not db_user:
