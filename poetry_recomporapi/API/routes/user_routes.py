@@ -17,7 +17,7 @@ from API.security import get_password_hash, password_check, verify_password, use
 
 router = APIRouter()
 
-@router.post("/criar_usuario")
+@router.post("/cria_user")
 def criar_user(user: DadosUser, session = Depends(get_session)): #criação da session
 
     if not username_check(user.username): #verificando o usarname
@@ -61,7 +61,24 @@ def criar_user(user: DadosUser, session = Depends(get_session)): #criação da s
 
     return db_user
 #eu amo o celso
-@router.get('/usuarios/') #listar os usuarios
+
+@router.get("/users/{user_id}")
+def exibir_user(user_id: str, session: Session = Depends(get_session)):
+    db_user = session.scalar(select(User).where(User.id == user_id))
+
+    if not db_user:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Usuário não encontrado.")
+
+    user = session.scalar(
+    select(User).where(
+        (User.id == user_id)
+        )
+    )
+    
+    return user
+
+
+@router.get("/users/") #listar os usuarios
 def read_users(limit: int = 10, offset: int = 0, session: Session = Depends(get_session)):
     users = list(session.scalars(select(User).limit(limit).offset(offset)))
     if len(users) == 0: #verificando se a tabela de users está vazia
