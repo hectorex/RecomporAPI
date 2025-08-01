@@ -11,12 +11,12 @@ from sqlalchemy.orm import Session
 from API.database import get_session
 from API.models.compostagem import Compostagem
 from API.models.composteira import Composteira
-from API.schemas.compostagem_schema import DadosCompostagem
+from API.schemas.compostagem_schema import DadosCompostagem, calculo_previsao, DadosCompostagemRetorno
 
 
 router =  APIRouter()
 
-@router.post("/minhas_composteiras/{composteira_id}/criar_compostagem") # criar compostagem
+@router.post("/minhas_composteiras/{composteira_id}/criar_compostagem", response_model= DadosCompostagemRetorno) # criar compostagem -- definindo qual será a "classe" retornada (já com previsao)
 async def criar_compostagem(composteira_id: str, compostagem: DadosCompostagem, session = Depends(get_session)): #criação da session
 
     db_composteira = session.scalar(
@@ -56,13 +56,13 @@ async def criar_compostagem(composteira_id: str, compostagem: DadosCompostagem, 
             status_code=HTTPStatus.CONFLICT, 
             detail="Valor inválido. Nome já existente"
             )
-    
+    previsao_calculada = calculo_previsao(compostagem.quantReduo)
     db_compostagem = Compostagem( # Instanciando objeto da classe compostagem
         nome= compostagem.nome,
         data_compostagem= compostagem.data_compostagem,
         quantReduo= compostagem.quantReduo,
         frequencia= compostagem.frequencia,
-        previsao= compostagem.previsao,
+        previsao= previsao_calculada,
         composteira_id = composteira_id
     )
     session.add(db_compostagem)
@@ -92,7 +92,7 @@ def delete_compostagem(id: str, session: Session = Depends(get_session)):
     return{'message': 'Compostagem deletada.'}
 
 
-@router.put("/minhas_composteiras/{composteira_id}/minhas_compostagens/{id}") #editar uma composteira ja existente
+@router.put("/minhas_composteiras/{composteira_id}/minhas_compostagens/{id}") #editar uma compostagem ja existente
 def update_compostagem(id: str, compostagem: DadosCompostagem, session: Session = Depends(get_session)):
     db_compostagem = session.scalar(select(Compostagem).where(Compostagem.id == id))
     
