@@ -100,7 +100,7 @@ def exibir_composteira(composteira_id: str, session: Session = Depends(get_sessi
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Composteira não encontrada.")
 
     composteira = session.scalar(
-    select(User).where(
+    select(Composteira).where(
         (Composteira.id == composteira_id)
         )
     )
