@@ -6,12 +6,12 @@ class DadosComposteira(BaseModel): #Classe da composteira
     nome: str
     tipo: str
     minhocas: bool
-    data_constru: str
+    data_construcao: str
     regiao: str
-    tamanho: float
+    tamanho: str
     user_id: str
     
-    @field_validator('data_constru', mode='before')
+    @field_validator('data_construcao', mode='before')
     def validar_data_criacao(cls, data):
         try:
             data_verificando = datetime.strptime(data, "%d-%m-%Y")
