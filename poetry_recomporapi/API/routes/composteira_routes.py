@@ -34,15 +34,20 @@ def criar_composteira(user_id: str,composteira: DadosComposteira, session = Depe
     #         detail="A inserção é inválida, insira True para sim e False para não"
     #     )
     
+    if composteira.tipo != "Terra" and composteira.tipo != "Caixa":
+        raise HTTPException(
+            status_code=400,
+            detail="Valor inválido. Insira: Terra ou Caixa."
+        )
     if len(composteira.nome) < 3 and composteira.nome != "   ":
         raise HTTPException(
             status_code=400,
             detail="Valor inválido. Insira: um valor com pelo menos 3 caracteres. Não insira: 3 espaços em branco."
         )
-    if composteira.tamanho <= 0: #verificando se o tamanho é válido
+    if composteira.tamanho != "Pequena" and composteira.tamanho != "Média" and composteira.tamanho != "Grande": #verificando se o tamanho é válido
         raise HTTPException(
             status_code=400,
-            detail="O tamanho inserido é inválido, insira um número maior que 0."
+            detail="O tamanho inserido é inválido, insira: Pequena; Média ou Grande."
         )
 
     db_composteira = session.scalar( #consultando se tem uma composteira com mesmo nome no banco
@@ -124,18 +129,26 @@ def deletar_composteira(id: str, session: Session = Depends(get_session)):
 def atualizar_composteira(id: str, composteira: DadosComposteira, session: Session = Depends(get_session)):
     db_composteira = session.scalar(select(Composteira).where(Composteira.id == id))
 
-    if not db_composteira:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Composteira não encontrada.")
-    
-    if len(composteira.nome) < 3 and composteira.nome != "   ":
+    if composteira.regiao not in ["Norte","Nordeste","Sudeste","Centro-Oeste","Sul"]:
+        raise HTTPException(
+            status_code=400,
+            detail="Valor inválido. Insira: Norte, Nordeste, Sul, Sudeste ou Centro-Oeste."
+        )
+
+    elif composteira.tipo not in ["Terra", "Caixa"]:
+        raise HTTPException(
+            status_code=400,
+            detail="Valor inválido. Insira: Terra ou Caixa."
+        )
+    elif len(composteira.nome) < 3 and composteira.nome != "   ":
         raise HTTPException(
             status_code=400,
             detail="Valor inválido. Insira: um valor com pelo menos 3 caracteres. Não insira: 3 espaços em branco."
         )
-    if composteira.tamanho <= 0: #verificando se o tamanho é válido
+    elif composteira.tamanho not in ["Pequena","Média","Grande"]: #verificando se o tamanho é válido
         raise HTTPException(
             status_code=400,
-            detail="O tamanho inserido é inválido, insira um número maior que 0."
+            detail="O tamanho inserido é inválido, insira: Pequena, Média ou Grande."
         )
 
     db_composteira = session.scalar( #consultando se tem uma composteira com mesmo nome no banco
