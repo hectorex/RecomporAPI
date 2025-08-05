@@ -13,7 +13,7 @@ from API.database import get_session
 from API.models.user_model import User
 from API.schemas.user_schema import DadosUser, DadosSenha
 from API.schemas.token_schema import Token
-from API.security import get_password_hash, password_check, verify_password
+from API.security import get_password_hash, password_check, verify_password, create_access_token
 
 router = APIRouter()
 
@@ -118,3 +118,8 @@ def login_for_access_token(
             status_code=HTTPStatus.UNAUTHORIZED,
             detail="Email ou senha incorretos."
         )
+    
+    access_token = create_access_token(
+        {"": db_user.username}
+    )
+    return {"access_token": access_token, "token_type": "Bearer"}

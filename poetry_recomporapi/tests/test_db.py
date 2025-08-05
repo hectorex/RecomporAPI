@@ -72,8 +72,6 @@ def test_create(session: Session):
         select(Compostagem).where(Compostagem.nome == "Compostagem Top")
     )
 
-    
-    breakpoint()
 
     UUID(compostagem.id)
     assert compostagem.nome == "Compostagem Top"
