@@ -9,10 +9,10 @@ from uuid import uuid4
 class Compostagem:
     __tablename__ = "compostagens_table" #Criando tabela compostagem
 
-    nome: Mapped[str] = mapped_column()
-    data_compostagem: Mapped[str] = mapped_column()
-    quantReduo: Mapped[float] = mapped_column()
+    data_inicio: Mapped[str] = mapped_column() #data_compostagem para data_inicio
+    peso: Mapped[float] = mapped_column() #quantReduo para peso
     frequencia: Mapped[str] = mapped_column()
-    previsao: Mapped[int] = mapped_column() 
-    composteira_id: Mapped[str] = mapped_column(ForeignKey("composteiras_table.id")) #definindo composteira_id como FK
-    id: Mapped[str] = mapped_column(primary_key=True, default_factory=lambda: str(uuid4())) #definindo ID como PK 
+    fkComposteira: Mapped[str] = mapped_column(ForeignKey("composteiras_table.id")) #composteira_id para fkComposteira #definindo composteira_id como FK
+    fkUsuario_comp = Mapped[str] = mapped_column(ForeignKey("users_table.id"))
+    id_compostagem: Mapped[str] = mapped_column(primary_key=True, default_factory=lambda: str(uuid4())) #id para id_compostagem #definindo ID como PK 
+    #data_pronto: Mapped[str] = mapped_column() #previsao para data_pronto

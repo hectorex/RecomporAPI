@@ -17,10 +17,10 @@ from API.schemas.compostagem_schema import DadosCompostagem, calculo_previsao, D
 router =  APIRouter()
 
 @router.post("/minhas_composteiras/{composteira_id}/criar_compostagem", response_model= DadosCompostagemRetorno) # criar compostagem -- definindo qual será a "classe" retornada (já com previsao)
-async def criar_compostagem(composteira_id: str, compostagem: DadosCompostagem, session = Depends(get_session)): #criação da session
+async def criar_compostagem(fkUsuario: str, fkComposteira: str, compostagem: DadosCompostagem, session = Depends(get_session)): #criação da session
 
     db_composteira = session.scalar(
-    select(Composteira).where(Composteira.id == composteira_id)
+    select(Composteira).where(Composteira.id == fkComposteira)
 )
     if not db_composteira:
         raise HTTPException(
@@ -28,16 +28,10 @@ async def criar_compostagem(composteira_id: str, compostagem: DadosCompostagem, 
             detail="Composteira não encontrada."
             )
     
-    if len(compostagem.nome) < 3 and compostagem.nome != "   ":
-        raise HTTPException(
-            status_code=400,
-            detail="Valor inválido. Insira: um valor com pelo menos 3 caracteres."
-        )
-    
-    if not compostagem.quantReduo > 0:
+    if not compostagem.peso > 0:
         raise HTTPException( #verificando se a quantReduo possui valor válido
             status_code=400,
-            detail="Valor inválido. Insira: um valor maior que 0."
+            detail="O peso inserido é inválido. Insira: um valor maior que 0."
         )
     if compostagem.frequencia.capitalize() not in ["Diaria","Semanal","Mensal"]:
         raise HTTPException( #verificando se frequencia é válida
@@ -58,12 +52,12 @@ async def criar_compostagem(composteira_id: str, compostagem: DadosCompostagem, 
             )
     previsao_calculada = calculo_previsao(compostagem.quantReduo)
     db_compostagem = Compostagem( # Instanciando objeto da classe compostagem
-        nome= compostagem.nome,
-        data_compostagem= compostagem.data_compostagem,
-        quantReduo= compostagem.quantReduo,
+        data_inicio= compostagem.data_inicio,
+        peso= compostagem.peso,
         frequencia= compostagem.frequencia,
-        previsao= previsao_calculada,
-        composteira_id = composteira_id
+        #data_pronto= previsao_calculada,
+        fkComposteira = fkComposteira,
+        fkUsuario = fkUsuario,
     )
     session.add(db_compostagem)
     session.commit()
@@ -71,16 +65,16 @@ async def criar_compostagem(composteira_id: str, compostagem: DadosCompostagem, 
 
     return db_compostagem
 
-@router.get('/minhas_composteiras/{composteira_id}/minhas_compostagens/{compostagem_id}')
-def exibir_Compostagem(compostagem_id: str, session: Session = Depends(get_session)):
-    db_compostagem = session.scalar(select(Compostagem).where(Compostagem.id == compostagem_id))
+@router.get('/minhas_composteiras/{composteira_id}/minhas_compostagens/{id_compostagem}')
+def exibir_Compostagem(id_compostagem: str, session: Session = Depends(get_session)):
+    db_compostagem = session.scalar(select(Compostagem).where(Compostagem.id == id_compostagem))
 
     if not db_compostagem:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Compostagem não encontrada.")
     
     compostagem = session.scalar(
     select(Compostagem).where(
-        (Compostagem.id == compostagem_id)
+        (Compostagem.id == id_compostagem)
         )
     )
     
@@ -96,7 +90,7 @@ def exibir_compostagens(limit: int = 10, offset: int = 0, session: Session = Dep
         return {"compostagens_table": [asdict(c) for c in compostagens]}
 
 @router.delete("/minhas_composteiras/{composteira_id}/minhas_compostagens/{id}") #deletar do espaço-tempo uma compostagem
-def deletar_compostagem(id: str, session: Session = Depends(get_session)):
+def deletar_compostagem(id_compostagem: str, session: Session = Depends(get_session)):
     db_compostagem = session.scalar(select(Compostagem).where(Compostagem.id == id))
 
     if not db_compostagem:
@@ -109,14 +103,9 @@ def deletar_compostagem(id: str, session: Session = Depends(get_session)):
 
 
 @router.put("/minhas_composteiras/{composteira_id}/minhas_compostagens/{id}") #editar uma compostagem ja existente
-def atualizar_compostagem(id: str, compostagem: DadosCompostagem, session: Session = Depends(get_session)):
+def atualizar_compostagem(id_compostagem: str, compostagem: DadosCompostagem, session: Session = Depends(get_session)):
     db_compostagem = session.scalar(select(Compostagem).where(Compostagem.id == id))
     
-    if len(compostagem.nome) < 3 and compostagem.nome != "   ":
-        raise HTTPException(
-            status_code=400,
-            detail="Valor inválido. Insira: um valor com pelo menos 3 caracteres."
-        )
     
     if not compostagem.quantReduo > 0:
         raise HTTPException( #verificando se a quantReduo possui valor válido
@@ -130,26 +119,15 @@ def atualizar_compostagem(id: str, compostagem: DadosCompostagem, session: Sessi
             )
 
         
-    db_compostagem = session.scalar(
-        select(Compostagem).where(
-            (Compostagem.nome == compostagem.nome )
-        )
-    )
-    if db_compostagem:
-        raise HTTPException( #verificando se o nome existe no db
-            status_code=HTTPStatus.CONFLICT, 
-            detail="Valor inválido. Nome já existente"
-            )  
 
     if not db_compostagem:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Compostagem não encontrada.")
 
     try:
-        db_compostagem.nome = compostagem.nome
-        db_compostagem.data_compostagem = compostagem.data_compostagem
-        db_compostagem.quantReduo = compostagem.quantReduo
+        db_compostagem.data_inicio = compostagem.data_inicio
+        db_compostagem.peso = compostagem.peso
         db_compostagem.frequencia = compostagem.frequencia
-        db_compostagem.previsao = compostagem.previsao
+        db_compostagem.data_pronto = compostagem.data_pronto
 
 
 

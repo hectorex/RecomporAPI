@@ -17,7 +17,7 @@ from API.schemas.composteira_schema import DadosComposteira
 router =  APIRouter()
 
 @router.post("/criar_composteira")
-def criar_composteira(user_id: str,composteira: DadosComposteira, session = Depends(get_session)): #criação da session
+def criar_composteira(fkUsuario: str,composteira: DadosComposteira, session = Depends(get_session)): #criação da session
 
     # Verificação Minhocas e retorno de String
     # Vai dar erro, porque mesmo que verifiquemos se é True ou False e 
@@ -34,15 +34,21 @@ def criar_composteira(user_id: str,composteira: DadosComposteira, session = Depe
     #         detail="A inserção é inválida, insira True para sim e False para não"
     #     )
     
+    if composteira.regiao not in ["Norte","Nordeste","Sudeste","Centro-Oeste","Sul"]:
+        raise HTTPException(
+            status_code=400,
+            detail="A regiao inserida é inválido. Insira: Norte, Nordeste, Sul, Sudeste ou Centro-Oeste."
+        )
+
     if composteira.tipo != "Terra" and composteira.tipo != "Caixa":
         raise HTTPException(
             status_code=400,
-            detail="Valor inválido. Insira: Terra ou Caixa."
+            detail="O tipo inserido é inválido. Insira: Terra ou Caixa."
         )
     if len(composteira.nome) < 3 and composteira.nome != "   ":
         raise HTTPException(
             status_code=400,
-            detail="Valor inválido. Insira: um valor com pelo menos 3 caracteres. Não insira: 3 espaços em branco."
+            detail="O nome inserido é inválido. Insira: um valor com pelo menos 3 caracteres. Não insira: 3 espaços em branco."
         )
     if composteira.tamanho != "Pequena" and composteira.tamanho != "Média" and composteira.tamanho != "Grande": #verificando se o tamanho é válido
         raise HTTPException(
@@ -65,7 +71,7 @@ def criar_composteira(user_id: str,composteira: DadosComposteira, session = Depe
         
     db_user = session.scalar( #verificando se o id informado existe no banco
         select(User).where(
-            (User.id == user_id)
+            (User.id == fkUsuario)
         )
     )
     if not db_user:
@@ -78,10 +84,10 @@ def criar_composteira(user_id: str,composteira: DadosComposteira, session = Depe
         nome=composteira.nome,
         tipo= composteira.tipo,
         minhocas= composteira.minhocas,
-        data_constru= composteira.data_constru,
+        data_construcao= composteira.data_construcao,
         regiao= composteira.regiao,
         tamanho= composteira.tamanho,
-        user_id= user_id          
+        fkUsuario= fkUsuario          
     )
     session.add(db_composteira)
     session.commit()
@@ -132,18 +138,18 @@ def atualizar_composteira(id: str, composteira: DadosComposteira, session: Sessi
     if composteira.regiao not in ["Norte","Nordeste","Sudeste","Centro-Oeste","Sul"]:
         raise HTTPException(
             status_code=400,
-            detail="Valor inválido. Insira: Norte, Nordeste, Sul, Sudeste ou Centro-Oeste."
+            detail="A regiao inserida é inválido. Insira: Norte, Nordeste, Sul, Sudeste ou Centro-Oeste."
         )
 
     elif composteira.tipo not in ["Terra", "Caixa"]:
         raise HTTPException(
             status_code=400,
-            detail="Valor inválido. Insira: Terra ou Caixa."
+            detail="O tipo inserido é inválido. Insira: Terra ou Caixa."
         )
     elif len(composteira.nome) < 3 and composteira.nome != "   ":
         raise HTTPException(
             status_code=400,
-            detail="Valor inválido. Insira: um valor com pelo menos 3 caracteres. Não insira: 3 espaços em branco."
+            detail="O nome inserido é inválido. Insira: um valor com pelo menos 3 caracteres. Não insira: 3 espaços em branco."
         )
     elif composteira.tamanho not in ["Pequena","Média","Grande"]: #verificando se o tamanho é válido
         raise HTTPException(

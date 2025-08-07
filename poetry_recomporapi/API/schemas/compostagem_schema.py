@@ -10,13 +10,14 @@ def calculo_previsao(quantReduo: float) -> int:
         # ele vai retornar isso numa futura rota de post
 
 class DadosCompostagem(BaseModel): #Classe da compostagem
-    nome: str
-    data_compostagem: str
-    quantReduo: float
-    frequencia: str
-    composteira_id: str
+    data_inicio: str
+    peso: float
+    frequencia: str 
+    fkComposteira: str
+    fkUsuario_comp: str
+    id_compostagem: str
 
-    @field_validator('data_compostagem', mode='before')
+    @field_validator('data_inicio', mode='before')
     def validar_data_criacao(cls, data):
         try:
             data_verificando = datetime.strptime(data, "%d-%m-%Y")
@@ -32,11 +33,12 @@ class DadosCompostagem(BaseModel): #Classe da compostagem
         return data
     
 class DadosCompostagemRetorno(BaseModel): #classe q será o retorno, pis conterá a previsao  
-    nome: str
-    data_compostagem: str
-    quantReduo: float
-    frequencia: str
-    previsao: int 
-    composteira_id: str
+    data_inicio: str
+    peso: float
+    frequencia: str 
+    fkComposteira: str
+    fkUsuario_comp: str
+    id_compostagem: str
+    #data_pronto: str
 
     
