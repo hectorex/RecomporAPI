@@ -66,6 +66,15 @@ def read_users(limit: int = 10, offset: int = 0, session: Session = Depends(get_
 def update_user(user_id: str, user: DadosUser, session: Session = Depends(get_session)):
     db_user = session.scalar(select(User).where(User.id == user_id))
 
+    if not password_check(user.password): #verificando segurança da senha
+        raise HTTPException(
+            status_code=400,
+            detail="A senha deve: ter mais que 6 caracteres; " \
+                "pelo menos um número; " \
+                "pelo menos uma letra maiúscula e uma minúscula; " \
+                "pelo menos um caracter especial.",
+            )
+
     if not db_user:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Usuário não encontrado.")
 

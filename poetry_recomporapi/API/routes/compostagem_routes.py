@@ -37,7 +37,6 @@ async def criar_compostagem(composteira_id: str, compostagem: DadosCompostagem, 
             status_code=400, 
             detail="Valor inválido. Insira: Diaria, Semanal ou Mensal (sem acento)."
             )
-
         
     db_compostagem = session.scalar(
         select(Compostagem).where(
@@ -94,11 +93,23 @@ def delete_compostagem(id: str, session: Session = Depends(get_session)):
 def update_compostagem(id: str, compostagem: DadosCompostagem, session: Session = Depends(get_session)):
     db_compostagem = session.scalar(select(Compostagem).where(Compostagem.id == id))
 
+    if len(compostagem.nome) < 3 and compostagem.nome != "   ":
+        raise HTTPException(
+            status_code=400,
+            detail="Valor inválido. Insira: um valor com pelo menos 3 caracteres."
+        )
+    
+    if not compostagem.quantReduo > 0:
+        raise HTTPException( #verificando se a quantReduo possui valor válido
+            status_code=400,
+            detail="Valor inválido. Insira: um valor maior que 0."
+        )
+    
     if compostagem.frequencia.capitalize() not in ["Diaria","Semanal","Mensal"]:
         raise HTTPException( #verificando se frequencia é válida
             status_code=400, 
             detail="Valor inválido. Insira: Diaria, Semanal ou Mensal (sem acento)."
-            )    
+            )
 
     if not db_compostagem:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Compostagem não encontrada.")

@@ -45,6 +45,7 @@ def criar_composteira(user_id: str,composteira: DadosComposteira, session = Depe
             detail="O tamanho inserido é inválido, insira um número maior que 0."
         )
 
+
     db_composteira = session.scalar( #consultando se tem uma composteira com mesmo nome no banco
         select(Composteira).where(
             (Composteira.nome == composteira.nome)
@@ -105,6 +106,18 @@ def delete_composteira(id: str, session: Session = Depends(get_session)):
 @router.put("/minhas_composteiras/{id}") #editar uma composteira ja existente
 def update_composteira(id: str, composteira: DadosComposteira, session: Session = Depends(get_session)):
     db_composteira = session.scalar(select(Composteira).where(Composteira.id == id))
+
+    #sim, repetição de código. mas é o que temos por ora.
+    if len(composteira.nome) < 3 and composteira.nome != "   ":
+        raise HTTPException(
+            status_code=400,
+            detail="Valor inválido. Insira: um valor com pelo menos 3 caracteres. Não insira: 3 espaços em branco."
+        )
+    if composteira.tamanho <= 0: #verificando se o tamanho é válido
+        raise HTTPException(
+            status_code=400,
+            detail="O tamanho inserido é inválido, insira um número maior que 0."
+        )
 
     if not db_composteira:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Composteira não encontrada.")
