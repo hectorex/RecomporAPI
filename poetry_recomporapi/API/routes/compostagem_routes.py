@@ -17,10 +17,10 @@ from API.schemas.compostagem_schema import DadosCompostagem, calculo_previsao, D
 router =  APIRouter()
 
 @router.post("/minhas_composteiras/{composteira_id}/criar_compostagem", response_model= DadosCompostagemRetorno) # criar compostagem -- definindo qual será a "classe" retornada (já com previsao)
-async def criar_compostagem(fkUsuario: str, fkComposteira: str, compostagem: DadosCompostagem, session = Depends(get_session)): #criação da session
+async def criar_compostagem(fkUsuario_comp: str, composteira_id: str, compostagem: DadosCompostagem, session = Depends(get_session)): #criação da session
 
     db_composteira = session.scalar(
-    select(Composteira).where(Composteira.id == fkComposteira)
+    select(Composteira).where(Composteira.id == composteira_id)
 )
     if not db_composteira:
         raise HTTPException(
@@ -40,24 +40,14 @@ async def criar_compostagem(fkUsuario: str, fkComposteira: str, compostagem: Dad
             )
 
         
-    db_compostagem = session.scalar(
-        select(Compostagem).where(
-            (Compostagem.nome == compostagem.nome )
-        )
-    )
-    if db_compostagem:
-        raise HTTPException( #verificando se o nome existe no db
-            status_code=HTTPStatus.CONFLICT, 
-            detail="Valor inválido. Nome já existente"
-            )
-    previsao_calculada = calculo_previsao(compostagem.quantReduo)
+    previsao_calculada = calculo_previsao(compostagem.peso)
     db_compostagem = Compostagem( # Instanciando objeto da classe compostagem
         data_inicio= compostagem.data_inicio,
         peso= compostagem.peso,
         frequencia= compostagem.frequencia,
         #data_pronto= previsao_calculada,
-        fkComposteira = fkComposteira,
-        fkUsuario = fkUsuario,
+        fkComposteira = composteira_id,
+        fkUsuario_comp = fkUsuario_comp,
     )
     session.add(db_compostagem)
     session.commit()
@@ -66,15 +56,16 @@ async def criar_compostagem(fkUsuario: str, fkComposteira: str, compostagem: Dad
     return db_compostagem
 
 @router.get('/minhas_composteiras/{composteira_id}/minhas_compostagens/{id_compostagem}')
-def exibir_Compostagem(id_compostagem: str, session: Session = Depends(get_session)):
-    db_compostagem = session.scalar(select(Compostagem).where(Compostagem.id == id_compostagem))
+def exibir_Compostagem(composteira_id: str, id_compostagem: str, session: Session = Depends(get_session)):
+    db_compostagem = session.scalar(select(Compostagem).where(Compostagem.id_compostagem == id_compostagem))
 
     if not db_compostagem:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Compostagem não encontrada.")
     
     compostagem = session.scalar(
     select(Compostagem).where(
-        (Compostagem.id == id_compostagem)
+        (Compostagem.fkComposteira == composteira_id) & 
+        (Compostagem.id_compostagem == id_compostagem)
         )
     )
     
@@ -82,16 +73,19 @@ def exibir_Compostagem(id_compostagem: str, session: Session = Depends(get_sessi
 
 
 @router.get('/minhas_composteiras/{composteira_id}/minhas_compostagens') #listando compostagens
-def exibir_compostagens(limit: int = 10, offset: int = 0, session: Session = Depends(get_session)):
-    compostagens = list(session.scalars(select(Compostagem).limit(limit).offset(offset)))
+def exibir_compostagens(composteira_id: str, limit: int = 10, offset: int = 0, session: Session = Depends(get_session)):
+    compostagens = list(session.scalars(
+    select(Compostagem).where(Compostagem.fkComposteira == composteira_id).limit(limit).offset(offset)
+))    
     if len(compostagens) == 0: #verificando se a tabela de compostagens está vazia
         return {"message": "Nenhuma compostagem encontrada."}
     else:
         return {"compostagens_table": [asdict(c) for c in compostagens]}
 
-@router.delete("/minhas_composteiras/{composteira_id}/minhas_compostagens/{id}") #deletar do espaço-tempo uma compostagem
-def deletar_compostagem(id_compostagem: str, session: Session = Depends(get_session)):
-    db_compostagem = session.scalar(select(Compostagem).where(Compostagem.id == id))
+@router.delete("/minhas_composteiras/{composteira_id}/minhas_compostagens/{id_compostagem}") #deletar do espaço-tempo uma compostagem
+def deletar_compostagem(composteira_id: str, id_compostagem: str, session: Session = Depends(get_session)):
+    db_compostagem = session.scalar(select(Compostagem).where((Compostagem.id_compostagem == id_compostagem) & (Compostagem.fkComposteira == composteira_id))
+)
 
     if not db_compostagem:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Compostagem não encontrada.")
@@ -102,13 +96,14 @@ def deletar_compostagem(id_compostagem: str, session: Session = Depends(get_sess
     return{'message': 'Compostagem deletada.'}
 
 
-@router.put("/minhas_composteiras/{composteira_id}/minhas_compostagens/{id}") #editar uma compostagem ja existente
-def atualizar_compostagem(id_compostagem: str, compostagem: DadosCompostagem, session: Session = Depends(get_session)):
-    db_compostagem = session.scalar(select(Compostagem).where(Compostagem.id == id))
+@router.put("/minhas_composteiras/{composteira_id}/minhas_compostagens/{id_compostagem}") #editar uma compostagem ja existente
+def atualizar_compostagem(composteira_id: str, id_compostagem: str, compostagem: DadosCompostagem, session: Session = Depends(get_session)):
+    db_compostagem = session.scalar(select(Compostagem).where((Compostagem.id_compostagem == id_compostagem) & (Compostagem.fkComposteira == composteira_id))
+)
     
     
-    if not compostagem.quantReduo > 0:
-        raise HTTPException( #verificando se a quantReduo possui valor válido
+    if not compostagem.peso > 0:
+        raise HTTPException( #verificando se o peso possui valor válido
             status_code=400,
             detail="Valor inválido. Insira: um valor maior que 0."
         )
@@ -127,7 +122,7 @@ def atualizar_compostagem(id_compostagem: str, compostagem: DadosCompostagem, se
         db_compostagem.data_inicio = compostagem.data_inicio
         db_compostagem.peso = compostagem.peso
         db_compostagem.frequencia = compostagem.frequencia
-        db_compostagem.data_pronto = compostagem.data_pronto
+        #db_compostagem.data_pronto = compostagem.data_pronto
 
 
 
