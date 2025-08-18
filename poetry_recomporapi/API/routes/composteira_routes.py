@@ -50,10 +50,10 @@ def criar_composteira(fkUsuario: str,composteira: DadosComposteira, session = De
             status_code=400,
             detail="O nome inserido é inválido. Insira: um valor com pelo menos 3 caracteres. Não insira: 3 espaços em branco."
         )
-    if composteira.tamanho != "Pequena" and composteira.tamanho != "Média" and composteira.tamanho != "Grande": #verificando se o tamanho é válido
+    if composteira.tamanho not in ["Pequena","Media","Grande"]: #verificando se o tamanho é válido
         raise HTTPException(
             status_code=400,
-            detail="O tamanho inserido é inválido, insira: Pequena; Média ou Grande."
+            detail="O tamanho inserido é inválido, insira: Pequena; Media ou Grande. (sem acentos)"
         )
 
     db_composteira = session.scalar( #consultando se tem uma composteira com mesmo nome no banco
@@ -151,10 +151,10 @@ def atualizar_composteira(id: str, composteira: DadosComposteira, session: Sessi
             status_code=400,
             detail="O nome inserido é inválido. Insira ao menos 3 caracteres diferentes de espaço."
         )
-    elif composteira.tamanho not in ["Pequena","Média","Grande"]: #verificando se o tamanho é válido
+    elif composteira.tamanho not in ["Pequena","Media","Grande"]: #verificando se o tamanho é válido
         raise HTTPException(
             status_code=400,
-            detail="O tamanho inserido é inválido, insira: Pequena, Média ou Grande."
+            detail="O tamanho inserido é inválido, insira: Pequena, Media ou Grande. (sem acentos)"
         )
 
     nome_existente = session.scalar( #consultando se tem uma composteira com mesmo nome no banco

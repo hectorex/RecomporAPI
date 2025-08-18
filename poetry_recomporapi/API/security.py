@@ -30,7 +30,7 @@ def password_check(password: str):
     return strong
 
 def username_check(usarname: str):
-    spclCaracs = ["!","@","#","$","%","&","*"," "]
+    spclCaracs = ["!","@","#","$","%","&","*","."]
     valido = True
     if len(usarname) < 5:
         valido =  False

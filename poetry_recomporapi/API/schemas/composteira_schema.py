@@ -9,7 +9,7 @@ class DadosComposteira(BaseModel): #Classe da composteira
     data_construcao: str
     regiao: str
     tamanho: str
-    user_id: str
+    fkUsuario: str
     
     @field_validator('data_construcao', mode='before')
     def validar_data_criacao(cls, data):

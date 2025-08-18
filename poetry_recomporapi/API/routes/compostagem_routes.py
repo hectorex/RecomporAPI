@@ -16,11 +16,11 @@ from API.schemas.compostagem_schema import DadosCompostagem, calculo_previsao, D
 
 router =  APIRouter()
 
-@router.post("/minhas_composteiras/{composteira_id}/criar_compostagem", response_model= DadosCompostagemRetorno) # criar compostagem -- definindo qual será a "classe" retornada (já com previsao)
-async def criar_compostagem(fkUsuario_comp: str, composteira_id: str, compostagem: DadosCompostagem, session = Depends(get_session)): #criação da session
+@router.post("/minhas_composteiras/{FkComposteira}/criar_compostagem", response_model= DadosCompostagemRetorno) # criar compostagem -- definindo qual será a "classe" retornada (já com previsao)
+async def criar_compostagem(fkUsuario_comp: str, FkComposteira: str, compostagem: DadosCompostagem, session = Depends(get_session)): #criação da session
 
     db_composteira = session.scalar(
-    select(Composteira).where(Composteira.id == composteira_id)
+    select(Composteira).where(Composteira.id_composteira == FkComposteira)
 )
     if not db_composteira:
         raise HTTPException(
@@ -46,7 +46,7 @@ async def criar_compostagem(fkUsuario_comp: str, composteira_id: str, compostage
         peso= compostagem.peso,
         frequencia= compostagem.frequencia,
         #data_pronto= previsao_calculada,
-        fkComposteira = composteira_id,
+        fkComposteira = FkComposteira,
         fkUsuario_comp = fkUsuario_comp,
     )
     session.add(db_compostagem)
@@ -55,36 +55,33 @@ async def criar_compostagem(fkUsuario_comp: str, composteira_id: str, compostage
 
     return db_compostagem
 
-@router.get('/minhas_composteiras/{composteira_id}/minhas_compostagens/{id_compostagem}')
-def exibir_Compostagem(composteira_id: str, id_compostagem: str, session: Session = Depends(get_session)):
-    db_compostagem = session.scalar(select(Compostagem).where(Compostagem.id_compostagem == id_compostagem))
-
-    if not db_compostagem:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Compostagem não encontrada.")
-    
+@router.get('/minhas_composteiras/{FkComposteira}/minhas_compostagens/{id_compostagem}')
+def exibir_Compostagem(FkComposteira: str, id_compostagem: str, session: Session = Depends(get_session)):
     compostagem = session.scalar(
     select(Compostagem).where(
-        (Compostagem.fkComposteira == composteira_id) & 
+        (Compostagem.fkComposteira == FkComposteira) & 
         (Compostagem.id_compostagem == id_compostagem)
         )
     )
+    if not compostagem:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Compostagem não encontrada.")
     
     return compostagem
 
 
-@router.get('/minhas_composteiras/{composteira_id}/minhas_compostagens') #listando compostagens
-def exibir_compostagens(composteira_id: str, limit: int = 10, offset: int = 0, session: Session = Depends(get_session)):
+@router.get('/minhas_composteiras/{FkComposteira}/minhas_compostagens') #listando compostagens
+def exibir_compostagens(FkComposteira: str, limit: int = 10, offset: int = 0, session: Session = Depends(get_session)):
     compostagens = list(session.scalars(
-    select(Compostagem).where(Compostagem.fkComposteira == composteira_id).limit(limit).offset(offset)
+    select(Compostagem).where(Compostagem.fkComposteira == FkComposteira).limit(limit).offset(offset)
 ))    
     if len(compostagens) == 0: #verificando se a tabela de compostagens está vazia
         return {"message": "Nenhuma compostagem encontrada."}
     else:
         return {"compostagens_table": [asdict(c) for c in compostagens]}
 
-@router.delete("/minhas_composteiras/{composteira_id}/minhas_compostagens/{id_compostagem}") #deletar do espaço-tempo uma compostagem
-def deletar_compostagem(composteira_id: str, id_compostagem: str, session: Session = Depends(get_session)):
-    db_compostagem = session.scalar(select(Compostagem).where((Compostagem.id_compostagem == id_compostagem) & (Compostagem.fkComposteira == composteira_id))
+@router.delete("/minhas_composteiras/{FkComposteira}/minhas_compostagens/{id_compostagem}") #deletar do espaço-tempo uma compostagem
+def deletar_compostagem(FkComposteira: str, id_compostagem: str, session: Session = Depends(get_session)):
+    db_compostagem = session.scalar(select(Compostagem).where((Compostagem.id_compostagem == id_compostagem) & (Compostagem.fkComposteira == FkComposteira))
 )
 
     if not db_compostagem:
@@ -96,9 +93,9 @@ def deletar_compostagem(composteira_id: str, id_compostagem: str, session: Sessi
     return{'message': 'Compostagem deletada.'}
 
 
-@router.put("/minhas_composteiras/{composteira_id}/minhas_compostagens/{id_compostagem}") #editar uma compostagem ja existente
-def atualizar_compostagem(composteira_id: str, id_compostagem: str, compostagem: DadosCompostagem, session: Session = Depends(get_session)):
-    db_compostagem = session.scalar(select(Compostagem).where((Compostagem.id_compostagem == id_compostagem) & (Compostagem.fkComposteira == composteira_id))
+@router.put("/minhas_composteiras/{FkComposteira}/minhas_compostagens/{id_compostagem}") #editar uma compostagem ja existente
+def atualizar_compostagem(FkComposteira: str, id_compostagem: str, compostagem: DadosCompostagem, session: Session = Depends(get_session)):
+    db_compostagem = session.scalar(select(Compostagem).where((Compostagem.id_compostagem == id_compostagem) & (Compostagem.fkComposteira == FkComposteira))
 )
     
     
