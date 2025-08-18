@@ -15,7 +15,7 @@ class DadosCompostagem(BaseModel): #Classe da compostagem
     frequencia: str 
     fkComposteira: str
     fkUsuario_comp: str
-    id_compostagem: str
+    # id_compostagem: str nao sei pq ta aq se vai ser atribuido sozinho
 
     @field_validator('data_inicio', mode='before')
     def validar_data_criacao(cls, data):
