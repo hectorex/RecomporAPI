@@ -105,22 +105,22 @@ def exibir_composteiras(limit: int = 10, offset: int = 0, session: Session = Dep
     
 @router.get("/minhas_composteiras/{composteira_id}")
 def exibir_composteira(composteira_id: str, session: Session = Depends(get_session)):
-    db_composteira = session.scalar(select(Composteira).where(Composteira.id == composteira_id))
+    db_composteira = session.scalar(select(Composteira).where(Composteira.id_composteira == composteira_id))
 
     if not db_composteira:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Composteira não encontrada.")
 
-    composteira = session.scalar(
-    select(Composteira).where(
-        (Composteira.id == composteira_id)
-        )
-    )
+    # composteira = session.scalar(
+    # select(Composteira).where(
+    #     (Composteira.id_composteira == composteira_id)
+    #     )
+    # )
     
-    return composteira
+    return db_composteira
 
 @router.delete("/minhas_composteiras/delete/{id}") #deletar do espaço-tempo uma composteira
 def deletar_composteira(id: str, session: Session = Depends(get_session)):
-    db_composteira = session.scalar(select(Composteira).where(Composteira.id == id))
+    db_composteira = session.scalar(select(Composteira).where(Composteira.id_composteira == id))
 
     if not db_composteira:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Composteira não encontrada.")
@@ -133,7 +133,7 @@ def deletar_composteira(id: str, session: Session = Depends(get_session)):
 
 @router.put("/minhas_composteiras/{id}") #editar uma composteira ja existente
 def atualizar_composteira(id: str, composteira: DadosComposteira, session: Session = Depends(get_session)):
-    db_composteira = session.scalar(select(Composteira).where(Composteira.id == id))
+    db_composteira = session.scalar(select(Composteira).where(Composteira.id_composteira == id))
 
     if composteira.regiao not in ["Norte","Nordeste","Sudeste","Centro-Oeste","Sul"]:
         raise HTTPException(
@@ -146,10 +146,10 @@ def atualizar_composteira(id: str, composteira: DadosComposteira, session: Sessi
             status_code=400,
             detail="O tipo inserido é inválido. Insira: Terra ou Caixa."
         )
-    elif len(composteira.nome) < 3 and composteira.nome != "   ":
+    elif len(composteira.nome.strip()) < 3: #strip retira caracteres vazios " "
         raise HTTPException(
             status_code=400,
-            detail="O nome inserido é inválido. Insira: um valor com pelo menos 3 caracteres. Não insira: 3 espaços em branco."
+            detail="O nome inserido é inválido. Insira ao menos 3 caracteres diferentes de espaço."
         )
     elif composteira.tamanho not in ["Pequena","Média","Grande"]: #verificando se o tamanho é válido
         raise HTTPException(
@@ -157,13 +157,14 @@ def atualizar_composteira(id: str, composteira: DadosComposteira, session: Sessi
             detail="O tamanho inserido é inválido, insira: Pequena, Média ou Grande."
         )
 
-    db_composteira = session.scalar( #consultando se tem uma composteira com mesmo nome no banco
+    nome_existente = session.scalar( #consultando se tem uma composteira com mesmo nome no banco
         select(Composteira).where(
-            (Composteira.nome == composteira.nome)
+            (Composteira.nome == composteira.nome),
+            (Composteira.id_composteira != id)
         )
     )
 
-    if db_composteira:
+    if nome_existente:
         raise HTTPException(
             status_code=HTTPStatus.CONFLICT,
             detail='Composteira já existe com esse nome.',
@@ -173,7 +174,7 @@ def atualizar_composteira(id: str, composteira: DadosComposteira, session: Sessi
         db_composteira.nome = composteira.nome
         db_composteira.tipo = composteira.tipo
         db_composteira.minhocas = composteira.minhocas
-        db_composteira.data_constru = composteira.data_constru
+        db_composteira.data_construcao = composteira.data_construcao
         db_composteira.regiao = composteira.regiao
         db_composteira.tamanho = composteira.tamanho
 
