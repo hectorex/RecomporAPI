@@ -94,6 +94,8 @@ def update_user(user_id: str, user: DadosUser, session: Session = Depends(get_se
                 status_code=HTTPStatus.CONFLICT,
                 detail='Username ou Email já existem.',
             )
+    
+#tem que colocar o esqueci a senha
 
 @router.delete("/users/delete/{user_id}") #deletar do espaço-tempo um user
 def delete_user(user_id: str, session: Session = Depends(get_session)):
