@@ -16,7 +16,7 @@ from API.schemas.composteira_schema import DadosComposteira
 
 router =  APIRouter()
 
-@router.post("/criar_composteira")
+@router.post("/composteiras") #criar composteira
 def criar_composteira(fkUsuario: str,composteira: DadosComposteira, session = Depends(get_session)): #criação da session
 
     # Verificação Minhocas e retorno de String
@@ -95,7 +95,7 @@ def criar_composteira(fkUsuario: str,composteira: DadosComposteira, session = De
 
     return db_composteira
     
-@router.get('/minhas_composteiras/')
+@router.get('/composteiras') #listar composteiras
 def exibir_composteiras(limit: int = 10, offset: int = 0, session: Session = Depends(get_session)):
     composteiras = list(session.scalars(select(Composteira).limit(limit).offset(offset)))
     if len(composteiras) == 0:
@@ -103,7 +103,7 @@ def exibir_composteiras(limit: int = 10, offset: int = 0, session: Session = Dep
     else:
         return {"composteiras_table": [asdict(c) for c in composteiras]}
     
-@router.get("/minhas_composteiras/{composteira_id}")
+@router.get("/composteiras/{composteira_id}") #consultar uma composteira
 def exibir_composteira(composteira_id: str, session: Session = Depends(get_session)):
     db_composteira = session.scalar(select(Composteira).where(Composteira.id_composteira == composteira_id))
 
@@ -118,7 +118,7 @@ def exibir_composteira(composteira_id: str, session: Session = Depends(get_sessi
     
     return db_composteira
 
-@router.delete("/minhas_composteiras/delete/{id}") #deletar do espaço-tempo uma composteira
+@router.delete("/composteiras/{composteira_id}") #deletar do espaço-tempo uma composteira
 def deletar_composteira(id: str, session: Session = Depends(get_session)):
     db_composteira = session.scalar(select(Composteira).where(Composteira.id_composteira == id))
 
@@ -131,7 +131,7 @@ def deletar_composteira(id: str, session: Session = Depends(get_session)):
     return{'message': 'Composteira deletada.'}
 
 
-@router.put("/minhas_composteiras/{id}") #editar uma composteira ja existente
+@router.put("/composteiras/{composteira_id}") #editar uma composteira ja existente
 def atualizar_composteira(id: str, composteira: DadosComposteira, session: Session = Depends(get_session)):
     db_composteira = session.scalar(select(Composteira).where(Composteira.id_composteira == id))
 
