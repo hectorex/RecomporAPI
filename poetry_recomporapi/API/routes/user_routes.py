@@ -17,7 +17,7 @@ from API.security import get_password_hash, password_check, verify_password, use
 
 router = APIRouter()
 
-@router.post("/cria_user")
+@router.post("/users") #criar user
 def criar_user(user: DadosUser, session = Depends(get_session)): #criação da session
 
     if not username_check(user.username): #verificando o usarname
@@ -62,7 +62,7 @@ def criar_user(user: DadosUser, session = Depends(get_session)): #criação da s
     return db_user
 #eu amo o celso
 
-@router.get("/users/{user_id}")
+@router.get("/users/{user_id}") #consultar um user
 def exibir_user(user_id: str, session: Session = Depends(get_session)):
     db_user = session.scalar(select(User).where(User.id == user_id))
 
@@ -78,7 +78,7 @@ def exibir_user(user_id: str, session: Session = Depends(get_session)):
     return user
 
 
-@router.get("/users/") #listar os usuarios
+@router.get("/users") #listar os usuarios
 def exibir_users(limit: int = 10, offset: int = 0, session: Session = Depends(get_session)):
     users = list(session.scalars(select(User).limit(limit).offset(offset)))
     if len(users) == 0: #verificando se a tabela de users está vazia
@@ -111,7 +111,7 @@ def atualizar_user(user_id: str, user: DadosUser, session: Session = Depends(get
                 detail='Username ou Email já existem.',
             )
 
-@router.delete("/users/delete/{user_id}") #deletar do espaço-tempo um user
+@router.delete("/users/{user_id}") #deletar do espaço-tempo um user
 def deletar_user(user_id: str, session: Session = Depends(get_session)):
     db_user = session.scalar(select(User).where(User.id == user_id))
 
