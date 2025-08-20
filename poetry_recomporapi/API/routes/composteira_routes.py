@@ -34,13 +34,13 @@ def criar_composteira(fkUsuario: str,composteira: DadosComposteira, session = De
     #         detail="A inserção é inválida, insira True para sim e False para não"
     #     )
     
-    if composteira.regiao not in ["Norte","Nordeste","Sudeste","Centro-Oeste","Sul"]:
+    if composteira.regiao.lower() not in ["norte","nordeste","sudeste","centro-oeste","sul"]: #verificando se o tipo é diferente de terra e caixa
         raise HTTPException(
             status_code=400,
             detail="A regiao inserida é inválido. Insira: Norte, Nordeste, Sul, Sudeste ou Centro-Oeste."
         )
 
-    if composteira.tipo != "Terra" and composteira.tipo != "Caixa":
+    if composteira.tipo.lower() not in ["terra", "caixa"]: #verificando se o tipo é diferente de terra e caixa
         raise HTTPException(
             status_code=400,
             detail="O tipo inserido é inválido. Insira: Terra ou Caixa."
@@ -50,7 +50,7 @@ def criar_composteira(fkUsuario: str,composteira: DadosComposteira, session = De
             status_code=400,
             detail="O nome inserido é inválido. Insira: um valor com pelo menos 3 caracteres. Não insira: 3 espaços em branco."
         )
-    if composteira.tamanho not in ["Pequena","Media","Grande"]: #verificando se o tamanho é válido
+    if composteira.tamanho.lower() not in ["pequena","media","grande"]: #verificando se o tamanho é válido
         raise HTTPException(
             status_code=400,
             detail="O tamanho inserido é inválido, insira: Pequena; Media ou Grande. (sem acentos)"
