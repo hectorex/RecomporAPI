@@ -59,7 +59,7 @@ async def criar_compostagem(fkUsuario_comp: str, FkComposteira: str, compostagem
 def exibir_Compostagem(FkComposteira: str, id_compostagem: str, session: Session = Depends(get_session)):
     compostagem = session.scalar(
     select(Compostagem).where(
-        (Compostagem.fkComposteira == FkComposteira) & 
+        (Compostagem.fkComposteira == FkComposteira) & #uma compostagem q cumpra os dois requisitos
         (Compostagem.id_compostagem == id_compostagem)
         )
     )
