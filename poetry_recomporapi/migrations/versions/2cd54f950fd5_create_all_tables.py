@@ -1,8 +1,8 @@
 """create all tables
 
-Revision ID: 7a4120fad406
+Revision ID: 2cd54f950fd5
 Revises: 
-Create Date: 2025-07-01 10:27:45.408268
+Create Date: 2025-09-05 10:25:49.679795
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '7a4120fad406'
+revision: str = '2cd54f950fd5'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -32,28 +32,28 @@ def upgrade() -> None:
     sa.UniqueConstraint('username')
     )
     op.create_table('composteiras_table',
+    sa.Column('fkUsuario', sa.String(), nullable=False),
     sa.Column('nome', sa.String(), nullable=False),
     sa.Column('tipo', sa.String(), nullable=False),
     sa.Column('minhocas', sa.Boolean(), nullable=False),
-    sa.Column('data_constru', sa.String(), nullable=False),
+    sa.Column('data_construcao', sa.Date(), nullable=False),
     sa.Column('regiao', sa.String(), nullable=False),
-    sa.Column('tamanho', sa.Float(), nullable=False),
+    sa.Column('tamanho', sa.String(), nullable=False),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=False),
-    sa.Column('user_id', sa.String(), nullable=False),
-    sa.Column('id', sa.String(), nullable=False),
-    sa.ForeignKeyConstraint(['user_id'], ['users_table.id'], ),
-    sa.PrimaryKeyConstraint('id')
+    sa.Column('id_composteira', sa.String(), nullable=False),
+    sa.ForeignKeyConstraint(['fkUsuario'], ['users_table.id'], ),
+    sa.PrimaryKeyConstraint('id_composteira')
     )
     op.create_table('compostagens_table',
-    sa.Column('nome', sa.String(), nullable=False),
-    sa.Column('data_compostagem', sa.String(), nullable=False),
-    sa.Column('quantReduo', sa.Float(), nullable=False),
+    sa.Column('data_inicio', sa.String(), nullable=False),
+    sa.Column('peso', sa.Float(), nullable=False),
     sa.Column('frequencia', sa.String(), nullable=False),
-    sa.Column('previsao', sa.Integer(), nullable=False),
-    sa.Column('composteira_id', sa.String(), nullable=False),
-    sa.Column('id', sa.String(), nullable=False),
-    sa.ForeignKeyConstraint(['composteira_id'], ['composteiras_table.id'], ),
-    sa.PrimaryKeyConstraint('id')
+    sa.Column('fkComposteira', sa.String(), nullable=False),
+    sa.Column('fkUsuario_comp', sa.String(), nullable=False),
+    sa.Column('id_compostagem', sa.String(), nullable=False),
+    sa.ForeignKeyConstraint(['fkComposteira'], ['composteiras_table.id_composteira'], ),
+    sa.ForeignKeyConstraint(['fkUsuario_comp'], ['users_table.id'], ),
+    sa.PrimaryKeyConstraint('id_compostagem')
     )
     # ### end Alembic commands ###
 
