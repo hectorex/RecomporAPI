@@ -103,22 +103,22 @@ def exibir_composteiras(limit: int = 10, offset: int = 0, session: Session = Dep
     else:
         return {"composteiras_table": [asdict(c) for c in composteiras]}
     
-@router.get("/composteiras/{composteira_id}") #consultar uma composteira
-def exibir_composteira(composteira_id: str, session: Session = Depends(get_session)):
-    db_composteira = session.scalar(select(Composteira).where(Composteira.id_composteira == composteira_id))
+@router.get("/composteiras/{id_composteira}") #consultar uma composteira
+def exibir_composteira(id_composteira: str, session: Session = Depends(get_session)):
+    db_composteira = session.scalar(select(Composteira).where(Composteira.id_composteira == id_composteira))
 
     if not db_composteira:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Composteira não encontrada.")
 
     # composteira = session.scalar(
     # select(Composteira).where(
-    #     (Composteira.id_composteira == composteira_id)
+    #     (Composteira.id_composteira == id_composteira)
     #     )
     # )
     
     return db_composteira
 
-@router.delete("/composteiras/{composteira_id}") #deletar do espaço-tempo uma composteira
+@router.delete("/composteiras/{id_composteira}") #deletar do espaço-tempo uma composteira
 def deletar_composteira(id: str, session: Session = Depends(get_session)):
     db_composteira = session.scalar(select(Composteira).where(Composteira.id_composteira == id))
 
@@ -131,7 +131,7 @@ def deletar_composteira(id: str, session: Session = Depends(get_session)):
     return{'message': 'Composteira deletada.'}
 
 
-@router.put("/composteiras/{composteira_id}") #editar uma composteira ja existente
+@router.put("/composteiras/{id_composteira}") #editar uma composteira ja existente
 def atualizar_composteira(id: str, composteira: DadosComposteira, session: Session = Depends(get_session)):
     db_composteira = session.scalar(select(Composteira).where(Composteira.id_composteira == id))
 
