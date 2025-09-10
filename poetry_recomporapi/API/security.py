@@ -4,12 +4,19 @@ from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 from jwt import encode
 
+from fastapi import Depends
+from fastapi.security import OAuth2PasswordBearer
+from sqlalchemy.orm import Session
+
+from API.database import get_session
+
 #provisório
 SECRET_KEY = "flamengo-secreto"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 pwd_context = PasswordHash.recommended()
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 def get_password_hash(password: str):
     return pwd_context.hash(password)
@@ -46,3 +53,9 @@ def password_check(password: str):
     if any(char in spclCaracs for char in password) == False:
         strong = False
     return strong
+
+def get_current_user(
+        session: Session = Depends(get_session),
+        token: str = Depends(oauth2_scheme)
+):
+    ...

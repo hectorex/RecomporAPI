@@ -63,7 +63,7 @@ def read_users(limit: int = 10, offset: int = 0, session: Session = Depends(get_
 
 
 @router.put("/users/{user_id}") #editar um usuario ja existente
-def update_user(user_id: str, user: DadosUser, session: Session = Depends(get_session)):
+def update_user(user_id: str, user: DadosUser, session: Session = Depends(get_session), current_user = Depends(get_current_user)):
     db_user = session.scalar(select(User).where(User.id == user_id))
 
     if not password_check(user.password): #verificando segurança da senha
