@@ -8,3 +8,5 @@
 #.env mesma coisa aqui, tirar do comentario o 2o .env e o database.db
 pyproject.toml
 poetry.lock
+# ambientes virtuais
+.venv/
