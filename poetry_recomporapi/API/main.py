@@ -30,5 +30,3 @@ def welcome():
 def api_status():
     return {"status": "online",
             "versão": "pre-alfa"}
-
-#luiz-endpoits

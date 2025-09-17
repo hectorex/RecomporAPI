@@ -79,7 +79,7 @@ def exibir_compostagens(FkComposteira: str, limit: int = 10, offset: int = 0, se
     else:
         return {"compostagens_table": [asdict(c) for c in compostagens]}
 
-@router.delete("compostagens/{id_compostagem}") #deletar do espaço-tempo uma compostagem
+@router.delete("/compostagens/{id_compostagem}") #deletar do espaço-tempo uma compostagem
 def deletar_compostagem(FkComposteira: str, id_compostagem: str, session: Session = Depends(get_session)):
     db_compostagem = session.scalar(select(Compostagem).where((Compostagem.id_compostagem == id_compostagem) & (Compostagem.fkComposteira == FkComposteira))
 )
@@ -93,7 +93,7 @@ def deletar_compostagem(FkComposteira: str, id_compostagem: str, session: Sessio
     return{'message': 'Compostagem deletada.'}
 
 
-@router.put("compostagens/{id_compostagem}") #editar uma compostagem ja existente
+@router.put("/compostagens/{id_compostagem}") #editar uma compostagem ja existente
 def atualizar_compostagem(FkComposteira: str, id_compostagem: str, compostagem: DadosCompostagem, session: Session = Depends(get_session)):
     db_compostagem = session.scalar(select(Compostagem).where((Compostagem.id_compostagem == id_compostagem) & (Compostagem.fkComposteira == FkComposteira))
 )

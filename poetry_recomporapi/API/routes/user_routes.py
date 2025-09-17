@@ -123,7 +123,8 @@ def deletar_user(user_id: str, session: Session = Depends(get_session)):
 
     return{'message': 'Usuário deletado.'}
 
-@router.post("/token/", response_model=Token) #autenticação e autorização de usuários / pode ser usado '/login' tb
+@router.post("/token/", response_model=Token) #em desenvolvimento by luiz felipe
+#autenticação e autorização de usuários / pode ser usado '/login' tb
 def login_for_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(), #dunossauro disse: 'é estranho mesmo!'
     session: Session = Depends(get_session)
