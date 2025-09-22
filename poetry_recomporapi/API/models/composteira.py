@@ -4,6 +4,8 @@ from sqlalchemy import func, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 from uuid import uuid4
 
+#Model para criação de Composteira
+
 @table_registry.mapped_as_dataclass
 class Composteira:
     __tablename__ = "composteiras_table"  # Criando tabela composteira

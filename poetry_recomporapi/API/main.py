@@ -3,6 +3,8 @@ from API.routes.composteira_routes import router as composteira_router
 from API.routes.compostagem_routes import router as compostagem_router
 from API.routes.user_routes import router as user_router
 
+#main do projeto
+
 app = FastAPI(                                 
     title = "Recompor - API",
     description = "A compostagem doméstica é um processo que ajuda a diminuir a emissão de gás carbônico no meio ambiente. " \
@@ -31,4 +33,3 @@ def api_status():
     return {"status": "online",
             "versão": "pre-alfa"}
 
-#luiz-endpoits

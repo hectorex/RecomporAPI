@@ -1,6 +1,8 @@
 from pwdlib import PasswordHash
 from uuid import uuid4
 
+#verificações de segurança para validações
+
 pwd_context = PasswordHash.recommended()
 
 def get_password_hash(password: str):

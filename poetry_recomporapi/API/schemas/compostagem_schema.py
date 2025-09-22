@@ -2,6 +2,9 @@ from pydantic import BaseModel, field_validator
 from datetime import datetime
 from fastapi import HTTPException
 
+#Schema para criação de Compostagem
+
+
 def calculo_previsao(quantReduo: float) -> int:
         dias = int(quantReduo / 0.5)
         if dias < 1:

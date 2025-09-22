@@ -1,5 +1,8 @@
 from pydantic import BaseModel, EmailStr
 from uuid import uuid4
+
+#Schema para criação de User
+
 class DadosUser(BaseModel): #Classe do user
     username: str
     password: str

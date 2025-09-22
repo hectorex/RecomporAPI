@@ -13,6 +13,7 @@ from API.models.user_model import User
 from API.schemas.composteira_schema import DadosComposteira
 # from API.database.fake_db import bd_composteiras
 
+#rotas para requisição - Composteira
 
 router =  APIRouter()
 

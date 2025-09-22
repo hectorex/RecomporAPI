@@ -13,6 +13,7 @@ from API.models.compostagem import Compostagem
 from API.models.composteira import Composteira
 from API.schemas.compostagem_schema import DadosCompostagem, calculo_previsao, DadosCompostagemRetorno
 
+#rotas para requisição - Compostagem
 
 router =  APIRouter()
 

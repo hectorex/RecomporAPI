@@ -15,6 +15,8 @@ from API.schemas.user_schema import DadosUser, DadosSenha
 from API.schemas.token_schema import Token
 from API.security import get_password_hash, password_check, verify_password, username_check
 
+#rotas para requisição - User
+
 router = APIRouter()
 
 @router.post("/users") #criar user
