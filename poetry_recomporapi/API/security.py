@@ -1,14 +1,17 @@
 from pwdlib import PasswordHash
+from sqlalchemy import select
 from uuid import uuid4
 from datetime import datetime, timedelta
+from http import HTTPStatus
 from zoneinfo import ZoneInfo
-from jwt import encode
+from jwt import DecodeError, encode, decode
 
-from fastapi import Depends
+from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
 from API.database import get_session
+from API.models.user_model import User
 
 #provisório
 SECRET_KEY = "flamengo-secreto"
@@ -58,4 +61,25 @@ def get_current_user(
         session: Session = Depends(get_session),
         token: str = Depends(oauth2_scheme)
 ):
-    ...
+    credentials_exception = HTTPException(
+        status_code=HTTPStatus.UNAUTHORIZED,
+        detail="Não foi possível validar as credenciais.",
+        headers={"WWW-Authenticate":"Bearer"},
+    )
+    
+    try:
+        payload = decode(token, SECRET_KEY, algorithms=ALGORITHM)
+        subject_user = payload.get("sub")
+        if not subject_user:
+            raise credentials_exception
+    except DecodeError:
+        raise credentials_exception
+    
+    user = session.scalar(
+        select(User).where(User.username == subject_user)
+    )
+
+    if not user:
+        raise credentials_exception
+    
+    return user

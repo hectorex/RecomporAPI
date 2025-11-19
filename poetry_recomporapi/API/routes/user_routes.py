@@ -13,7 +13,7 @@ from API.database import get_session
 from API.models.user_model import User
 from API.schemas.user_schema import DadosUser, DadosSenha
 from API.schemas.token_schema import Token
-from API.security import get_password_hash, password_check, verify_password, create_access_token
+from API.security import get_current_user, get_password_hash, password_check, verify_password, create_access_token
 
 router = APIRouter()
 
@@ -57,14 +57,15 @@ def criar_user(user: DadosUser, session = Depends(get_session)): #criação da s
     return db_user
 #eu amo o celso
 @router.get('/usuarios/') #listar os usuarios
-def read_users(limit: int = 10, offset: int = 0, session: Session = Depends(get_session)):
+def read_users(limit: int = 10, offset: int = 0, session: Session = Depends(get_session), current_user = Depends(get_current_user)):
     users = list(session.scalars(select(User).limit(limit).offset(offset)))
     return {"users_table": [asdict(user) for user in users]}
 
 
 @router.put("/users/{user_id}") #editar um usuario ja existente
-def update_user(user_id: str, user: DadosUser, session: Session = Depends(get_session), current_user = Depends(get_current_user)):
-    db_user = session.scalar(select(User).where(User.id == user_id))
+def update_user(user_id: str, user: DadosUser, session: Session = Depends(get_session), current_user: User = Depends(get_current_user)):
+    
+    #db_user = session.scalar(select(User).where(User.id == user_id)) nao precisa mais rs
 
     if not password_check(user.password): #verificando segurança da senha
         raise HTTPException(
@@ -75,19 +76,25 @@ def update_user(user_id: str, user: DadosUser, session: Session = Depends(get_se
                 "pelo menos um caracter especial.",
             )
 
-    if not db_user:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Usuário não encontrado.")
+    '''if not db_user:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Usuário não encontrado.")'''
+
+    if current_user.id != user_id:
+        raise HTTPException(
+            status_code=HTTPStatus.FORBIDDEN,
+            detail="Sem permissões suficientes."
+        )
 
     try:
-        db_user.email = user.email
-        db_user.username = user.username
-        db_user.password = get_password_hash(user.password)
+        current_user.email = user.email
+        current_user.username = user.username
+        current_user.password = get_password_hash(user.password)
 
-        session.add(db_user)
+        session.add(current_user)
         session.commit()
-        session.refresh(db_user)
+        session.refresh(current_user)
         
-        return db_user
+        return current_user
     
     except IntegrityError:
         raise HTTPException(
@@ -98,13 +105,20 @@ def update_user(user_id: str, user: DadosUser, session: Session = Depends(get_se
 #tem que colocar o esqueci a senha
 
 @router.delete("/users/delete/{user_id}") #deletar do espaço-tempo um user
-def delete_user(user_id: str, session: Session = Depends(get_session)):
-    db_user = session.scalar(select(User).where(User.id == user_id))
+def delete_user(user_id: str, session: Session = Depends(get_session), current_user: User = Depends(get_current_user)):
+
+    '''db_user = session.scalar(select(User).where(User.id == user_id))
 
     if not db_user:
-        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Usuário não encontrado.")
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Usuário não encontrado.")'''
     
-    session.delete(db_user)
+    if current_user.id != user_id:
+        raise HTTPException(
+            status_code=HTTPStatus.FORBIDDEN,
+            detail="Sem permissões suficientes."
+        )
+    
+    session.delete(current_user)
     session.commit()
 
     return{'message': 'Usuário deletado.'}
