@@ -1,13 +1,12 @@
-from pwdlib import PasswordHash
 from uuid import uuid4
+from passlib.hash import django_pbkdf2_sha256
 
-pwd_context = PasswordHash.recommended()
+def get_password_hash(raw_password: str) -> str:
+    return django_pbkdf2_sha256.hash(raw_password) #hash padrão do django, para padronizar com user padrao django
 
-def get_password_hash(password: str):
-    return pwd_context.hash(password)
 
 def verify_password(plain_password: str, hashed_password: str):
-    return pwd_context.verify(plain_password, hashed_password)
+    return django_pbkdf2_sha256.verify(plain_password, hashed_password)
 
 def create_access_token(data: dict):
     ...

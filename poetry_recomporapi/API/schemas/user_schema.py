@@ -1,11 +1,17 @@
 from pydantic import BaseModel, EmailStr
-from uuid import uuid4
-class DadosUser(BaseModel): #Classe do user
+from uuid import UUID
+
+class DadosUser(BaseModel):
     username: str
     password: str
-    email: EmailStr #validar o email se ele eh um email msm
+    email: EmailStr
+    is_active: bool = True
+    is_staff: bool = False
+    is_superuser: bool = False
 
-class DadosSenha(BaseModel): #Classe da senha
-    user_id: uuid4
+
+class DadosSenha(BaseModel):
+    user_id: UUID
     nova_senha: str
+
     
