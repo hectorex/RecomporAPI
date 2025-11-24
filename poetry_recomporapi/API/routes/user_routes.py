@@ -9,8 +9,8 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from API.database import get_session
-from API.models.user_model import User
+from API.database.database import get_session
+from poetry_recomporapi.API.models.user_model import User
 from API.schemas.user_schema import DadosUser, DadosSenha
 from API.schemas.token_schema import Token
 from API.security import get_password_hash, password_check, verify_password, username_check

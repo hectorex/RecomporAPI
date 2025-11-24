@@ -8,7 +8,7 @@ from uuid import uuid4
 class Composteira:
     __tablename__ = "composteiras_table"  # Criando tabela composteira
 
-    fkUsuario: Mapped[str] = mapped_column(ForeignKey("auth_user.id"))
+    fkUsuario: Mapped[int] = mapped_column(ForeignKey("auth_user.id"))
     
     nome: Mapped[str] = mapped_column()
     tipo: Mapped[str] = mapped_column()  # Terra ou Caixa

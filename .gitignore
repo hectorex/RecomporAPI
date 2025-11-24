@@ -6,7 +6,5 @@
 #database.db ignorar por ora, so vai ser importante quando for uploadado de fato para o github valendo 100% rs
 #.env
 #.env mesma coisa aqui, tirar do comentario o 2o .env e o database.db
-pyproject.toml
-poetry.lock
 # ambientes virtuais
 .venv/

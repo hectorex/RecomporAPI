@@ -3,8 +3,9 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from alembic import context
 from API.settings import Settings
-from API.models import user_model, composteira, compostagem
+from API.models import composteira, compostagem
 from API.models.table_registry import table_registry
+from poetry_recomporapi.API.models import user_model
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

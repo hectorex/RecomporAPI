@@ -8,7 +8,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from API.database import get_session
+from API.database.database import get_session
 from API.models.compostagem import Compostagem
 from API.models.composteira import Composteira
 from API.schemas.compostagem_schema import DadosCompostagem, calculo_previsao, DadosCompostagemRetorno

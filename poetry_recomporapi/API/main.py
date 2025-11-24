@@ -24,7 +24,7 @@ app.include_router(user_router)
 
 @app.get("/")
 def welcome():
-    return {"mensagem": "Está é a API do projeto Recompor"}
+    return {"mensagem": "API do projeto Recompor"}
 
 @app.get("/status")
 def api_status():

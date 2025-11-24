@@ -1,0 +1,33 @@
+[tool.poetry]
+name = "poetry-recomporapi"
+version = "0.1.0"
+description = ""
+authors = [
+    "mnzlipe <luizfelipemam2007@gmail.com>",
+    "Celso Hector <hector.c@estudante.ifro.edu.br>"
+]
+package-mode = false
+
+
+[tool.poetry.dependencies]
+python = ">=3.12,<4.0"
+pydantic-settings = ">=2.9.1,<3.0.0"
+alembic = ">=1.16.1,<2.0.0"
+pwdlib = { version = ">=0.2.1,<0.3.0", extras = ["argon2"] }
+pyjwt = ">=2.10.1,<3.0.0"
+tzdata = ">=2025.2,<2026.0"
+fastapi = "^0.115.0"
+uvicorn = "^0.32.0"
+sqlalchemy = "^2.0.36"
+python-dotenv = "^1.0.1"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.4.1"
+
+[tool.ruff]
+line-length = 79
+extend-exclude = ["migrations"]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
