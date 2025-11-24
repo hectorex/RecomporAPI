@@ -126,7 +126,7 @@ def delete_user(user_id: str, session: Session = Depends(get_session), current_u
 @router.post("/token/", response_model=Token) #autenticação e autorização de usuários / pode ser usado '/login' tb
 def login_for_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(), #dunossauro disse: 'é estranho mesmo!'
-    session: Session = Depends(get_session)
+    session: Session = Depends(get_session),
 ):
     db_user = session.scalar(
         select(User).where(User.username == form_data.username)
@@ -145,6 +145,6 @@ def login_for_access_token(
         )
     
     access_token = create_access_token(
-        {"": db_user.username}
+        data={"sub": db_user.username}
     )
     return {"access_token": access_token, "token_type": "Bearer"}

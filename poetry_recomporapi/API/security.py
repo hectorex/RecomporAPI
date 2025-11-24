@@ -1,7 +1,7 @@
 from pwdlib import PasswordHash
 from sqlalchemy import select
 from uuid import uuid4
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from http import HTTPStatus
 from zoneinfo import ZoneInfo
 from jwt import DecodeError, encode, decode
@@ -31,9 +31,7 @@ def create_access_token(data: dict):
     to_encode = data.copy()
 
     #expiração de 30 minutos do token
-    expire = datetime.now(tz=ZoneInfo("UTC")) + timedelta(
-        minutes=ACCESS_TOKEN_EXPIRE_MINUTES
-    )
+    expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
 
     to_encode.update({"exp": expire})
 
@@ -68,7 +66,7 @@ def get_current_user(
     )
     
     try:
-        payload = decode(token, SECRET_KEY, algorithms=ALGORITHM)
+        payload = decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         subject_user = payload.get("sub")
         if not subject_user:
             raise credentials_exception
