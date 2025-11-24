@@ -1,5 +1,4 @@
 from pydantic import BaseModel, EmailStr
-from uuid import UUID
 
 class DadosUser(BaseModel):
     username: str
@@ -11,7 +10,7 @@ class DadosUser(BaseModel):
 
 
 class DadosSenha(BaseModel):
-    user_id: UUID
+    user_id: int
     nova_senha: str
 
     

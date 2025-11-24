@@ -13,8 +13,8 @@ class DadosCompostagem(BaseModel): #Classe da compostagem
     data_inicio: str
     peso: float
     frequencia: str 
-    fkComposteira: str
-    fkUsuario_comp: str
+    fkComposteira: int
+    fkUsuario_comp: int
     # id_compostagem: str nao sei pq ta aq se vai ser atribuido sozinho
 
     @field_validator('data_inicio', mode='before')

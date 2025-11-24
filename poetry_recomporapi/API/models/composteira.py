@@ -19,4 +19,4 @@ class Composteira:
     created_at: Mapped[datetime] = mapped_column(
         init=False, server_default=func.now()
     )
-    id_composteira: Mapped[str] = mapped_column(primary_key=True, default_factory=lambda: str(uuid4()))
+    id_composteira: Mapped[int] = mapped_column(primary_key=True, autoincrement=True, init=False)
