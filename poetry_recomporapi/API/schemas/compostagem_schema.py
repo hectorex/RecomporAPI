@@ -15,7 +15,6 @@ class DadosCompostagem(BaseModel): #Classe da compostagem
     frequencia: str 
     fkComposteira: int
     fkUsuario_comp: int
-    # id_compostagem: str nao sei pq ta aq se vai ser atribuido sozinho
 
     @field_validator('data_inicio', mode='before')
     def validar_data_criacao(cls, data):
@@ -36,9 +35,8 @@ class DadosCompostagemRetorno(BaseModel): #classe q ser√° o retorno, pis conter√
     data_inicio: str
     peso: float
     frequencia: str 
-    fkComposteira: str
-    fkUsuario_comp: str
-    id_compostagem: str
-    #data_pronto: str
+    fkComposteira: int
+    fkUsuario_comp: int
+    id_compostagem: int
 
     

@@ -10,7 +10,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from API.database.database import get_session
-from poetry_recomporapi.API.models.user_model import User
+from API.models.user_model import User
 from API.schemas.user_schema import DadosUser, DadosSenha
 from API.schemas.token_schema import Token
 from API.security import get_password_hash, password_check, verify_password, username_check
@@ -60,10 +60,9 @@ def criar_user(user: DadosUser, session = Depends(get_session)): #criação da s
     session.refresh(db_user)
 
     return db_user
-#eu amo o celso
 
 @router.get("/users/{user_id}") #consultar um user
-def exibir_user(user_id: str, session: Session = Depends(get_session)):
+def exibir_user(user_id: int, session: Session = Depends(get_session)):
     db_user = session.scalar(select(User).where(User.id == user_id))
 
     if not db_user:
@@ -88,7 +87,7 @@ def exibir_users(limit: int = 10, offset: int = 0, session: Session = Depends(ge
 
 
 @router.put("/users/{user_id}") #editar um usuario ja existente
-def atualizar_user(user_id: str, user: DadosUser, session: Session = Depends(get_session)):
+def atualizar_user(user_id: int, user: DadosUser, session: Session = Depends(get_session)):
     db_user = session.scalar(select(User).where(User.id == user_id))
 
     if not db_user:
@@ -112,7 +111,7 @@ def atualizar_user(user_id: str, user: DadosUser, session: Session = Depends(get
             )
 
 @router.delete("/users/{user_id}") #deletar do espaço-tempo um user
-def deletar_user(user_id: str, session: Session = Depends(get_session)):
+def deletar_user(user_id: int, session: Session = Depends(get_session)):
     db_user = session.scalar(select(User).where(User.id == user_id))
 
     if not db_user:
