@@ -55,12 +55,11 @@ def criar_user(user: DadosUser, session = Depends(get_session)): #criação da s
     session.refresh(db_user)
 
     return db_user
-#eu amo o celso
+
 @router.get('/usuarios/') #listar os usuarios
 def read_users(limit: int = 10, offset: int = 0, session: Session = Depends(get_session), current_user = Depends(get_current_user)):
     users = list(session.scalars(select(User).limit(limit).offset(offset)))
     return {"users_table": [asdict(user) for user in users]}
-
 
 @router.put("/users/{user_id}") #editar um usuario ja existente
 def update_user(user_id: str, user: DadosUser, session: Session = Depends(get_session), current_user: User = Depends(get_current_user)):
@@ -101,8 +100,6 @@ def update_user(user_id: str, user: DadosUser, session: Session = Depends(get_se
                 status_code=HTTPStatus.CONFLICT,
                 detail='Username ou Email já existem.',
             )
-    
-#tem que colocar o esqueci a senha
 
 @router.delete("/users/delete/{user_id}") #deletar do espaço-tempo um user
 def delete_user(user_id: str, session: Session = Depends(get_session), current_user: User = Depends(get_current_user)):
