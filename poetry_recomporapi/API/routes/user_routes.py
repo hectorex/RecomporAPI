@@ -10,7 +10,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from API.database.database import get_session
-from API.models.user_model import User
+from poetry_recomporapi.API.models.user_model import User
 from API.schemas.user_schema import DadosUser, DadosSenha
 from API.schemas.token_schema import Token
 from API.security import get_password_hash, password_check, verify_password, username_check
@@ -20,6 +20,12 @@ router = APIRouter()
 @router.post("/users") #criar user
 def criar_user(user: DadosUser, session = Depends(get_session)): #criação da session
 
+    """
+    Registra um novo usuário no sistema com validações de segurança.
+    Realiza o hashing da senha antes de persistir no banco.
+    """
+
+    # Validações de formato via utilitários (Username e Password)
     if not username_check(user.username): #verificando o usarname
         raise HTTPException(
             status_code=400,
@@ -33,6 +39,8 @@ def criar_user(user: DadosUser, session = Depends(get_session)): #criação da s
                 "pelo menos uma letra maiúscula e uma minúscula; " \
                 "pelo menos um caracter especial.",
             )
+    
+    # Verifica se username ou email já estão em uso (Regra de Unicidade)
     db_user = session.scalar( #buscando os dados
         select(User).where(
             (User.username == user.username) | (User.email == user.email)
@@ -51,7 +59,7 @@ def criar_user(user: DadosUser, session = Depends(get_session)): #criação da s
                 detail="Email já existe",
             )
 
-
+    # Criação do objeto com senha criptografada (Segurança): "get password hash"
     db_user = User( #definindo
         username=user.username, password=get_password_hash(user.password), email=user.email
     )
@@ -60,9 +68,11 @@ def criar_user(user: DadosUser, session = Depends(get_session)): #criação da s
     session.refresh(db_user)
 
     return db_user
+#eu amo o celso
 
 @router.get("/users/{user_id}") #consultar um user
-def exibir_user(user_id: int, session: Session = Depends(get_session)):
+# Busca perfil de usuário por ID único.
+def exibir_user(user_id: str, session: Session = Depends(get_session)):
     db_user = session.scalar(select(User).where(User.id == user_id))
 
     if not db_user:
@@ -79,6 +89,7 @@ def exibir_user(user_id: int, session: Session = Depends(get_session)):
 
 @router.get("/users") #listar os usuarios
 def exibir_users(limit: int = 10, offset: int = 0, session: Session = Depends(get_session)):
+    # Lista usuários cadastrados com suporte a paginação.
     users = list(session.scalars(select(User).limit(limit).offset(offset)))
     if len(users) == 0: #verificando se a tabela de users está vazia
         return {"message": "Nenhum usuário encontrado."}
@@ -87,7 +98,8 @@ def exibir_users(limit: int = 10, offset: int = 0, session: Session = Depends(ge
 
 
 @router.put("/users/{user_id}") #editar um usuario ja existente
-def atualizar_user(user_id: int, user: DadosUser, session: Session = Depends(get_session)):
+def atualizar_user(user_id: str, user: DadosUser, session: Session = Depends(get_session)):
+    # Atualiza dados cadastrais e gera novo hash caso a senha seja alterada.
     db_user = session.scalar(select(User).where(User.id == user_id))
 
     if not db_user:
@@ -111,7 +123,8 @@ def atualizar_user(user_id: int, user: DadosUser, session: Session = Depends(get
             )
 
 @router.delete("/users/{user_id}") #deletar do espaço-tempo um user
-def deletar_user(user_id: int, session: Session = Depends(get_session)):
+# Remove o usuário do sistema por ID.
+def deletar_user(user_id: str, session: Session = Depends(get_session)):
     db_user = session.scalar(select(User).where(User.id == user_id))
 
     if not db_user:
@@ -128,10 +141,15 @@ def login_for_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(), #dunossauro disse: 'é estranho mesmo!'
     session: Session = Depends(get_session)
 ):
+    """
+    Endpoint de Autenticação OAuth2. 
+    Verifica credenciais e retorna o Access Token para rotas protegidas.
+    """
     db_user = session.scalar(
         select(User).where(User.username == form_data.username)
     )
 
+    # Proteção contra timing attacks: erro genérico para usuário ou senha inválidos
     if not db_user:
         raise HTTPException(
             status_code=HTTPStatus.UNAUTHORIZED,
@@ -143,3 +161,5 @@ def login_for_access_token(
             status_code=HTTPStatus.UNAUTHORIZED,
             detail="Email ou senha incorretos."
         )
+    
+# Aqui entraria a chamada para create_access_token(...)

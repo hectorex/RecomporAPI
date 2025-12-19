@@ -2,8 +2,9 @@ from fastapi import FastAPI
 from API.routes.composteira_routes import router as composteira_router
 from API.routes.compostagem_routes import router as compostagem_router
 from API.routes.user_routes import router as user_router
-#asassasdfsdfsdfsdfsdsdfsdsdf
-app = FastAPI(                                 
+
+
+app = FastAPI(               
     title = "Recompor - API",
     description = "A compostagem doméstica é um processo que ajuda a diminuir a emissão de gás carbônico no meio ambiente. " \
     "Atualmente existem dois projetos focados em desenvolver sistemas que ajudem as pessoas a entenderem o que é compostagem e como executá-la em casa, um sistema web e outro mobile. " \
@@ -14,19 +15,22 @@ app = FastAPI(
     contact = {
         "name": "the developers",
         "email": "luizfelipemam2007@gmail.com",
-        "email": "celsohectorhm@gmail.com",
+        "email": "celsohectorhm@gmail.com", #contato dos desenvolvedores para manuntenção
     },
 ) 
 
+# Agrupamento de rotas por contexto (Módulos da API)
 app.include_router(compostagem_router)
 app.include_router(composteira_router)
 app.include_router(user_router)
-#123 teste
+
 @app.get("/")
 def welcome():
+    # Retorna mensagem de boas-vindas para verificação incial.
     return {"mensagem": "API do projeto Recompor"}
 
 @app.get("/status")
 def api_status():
+    # Verifica se a API está online e retorna a versão atual
     return {"status": "online",
             "versão": "pre-alfa"}

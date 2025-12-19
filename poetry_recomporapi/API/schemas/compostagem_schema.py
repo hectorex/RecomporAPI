@@ -3,6 +3,7 @@ from datetime import datetime
 from fastapi import HTTPException
 
 def calculo_previsao(quantReduo: float) -> int:
+        # Calcula dias para conclusão: 1 dia por cada 0.5kg (mínimo 1 dia).
         dias = int(quantReduo / 0.5)
         if dias < 1:
             dias = 1
@@ -10,14 +11,17 @@ def calculo_previsao(quantReduo: float) -> int:
         # ele vai retornar isso numa futura rota de post
 
 class DadosCompostagem(BaseModel): #Classe da compostagem
+    # Esquema de entrada para novos registros de compostagem.
     data_inicio: str
     peso: float
     frequencia: str 
     fkComposteira: int
     fkUsuario_comp: int
+    # id_compostagem: str nao sei pq ta aq se vai ser atribuido sozinho
 
     @field_validator('data_inicio', mode='before')
     def validar_data_criacao(cls, data):
+        # Valida formato de data (DD-MM-YYYY) e impede datas futuras.
         try:
             data_verificando = datetime.strptime(data, "%d-%m-%Y")
         except ValueError:
@@ -31,12 +35,11 @@ class DadosCompostagem(BaseModel): #Classe da compostagem
                     detail="Data posterior a de hoje.")
         return data
     
-class DadosCompostagemRetorno(BaseModel): #classe q será o retorno, pis conterá a previsao  
+class DadosCompostagemRetorno(BaseModel):  
+    # Esquema de saída incluindo IDs gerados e campos calculados.
     data_inicio: str
     peso: float
     frequencia: str 
-    fkComposteira: int
-    fkUsuario_comp: int
-    id_compostagem: int
-
-    
+    fkComposteira: str
+    fkUsuario_comp: str
+    id_compostagem: str # Gerado automaticamente pelo banco/UUID    

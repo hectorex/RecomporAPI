@@ -17,8 +17,10 @@ from API.schemas.compostagem_schema import DadosCompostagem, calculo_previsao, D
 router =  APIRouter()
 
 @router.post("/composteiras/{FkComposteira}/compostagens", response_model= DadosCompostagemRetorno) # criar compostagem -- definindo qual será a "classe" retornada (já com previsao)
-async def criar_compostagem(fkUsuario_comp: int, FkComposteira: int, compostagem: DadosCompostagem, session = Depends(get_session)): #criação da session
+async def criar_compostagem(fkUsuario_comp: str, FkComposteira: str, compostagem: DadosCompostagem, session = Depends(get_session)): #criação da session
+# Cria um novo ciclo de compostagem associado a uma composteira específica.
 
+    # Valida existência da composteira pai
     db_composteira = session.scalar(
     select(Composteira).where(Composteira.id_composteira == FkComposteira)
 )
@@ -28,6 +30,7 @@ async def criar_compostagem(fkUsuario_comp: int, FkComposteira: int, compostagem
             detail="Composteira não encontrada."
             )
     
+    # Validações de negócio (Peso e Frequência)
     if not compostagem.peso > 0:
         raise HTTPException( #verificando se a quantReduo possui valor válido
             status_code=400,
@@ -39,7 +42,7 @@ async def criar_compostagem(fkUsuario_comp: int, FkComposteira: int, compostagem
             detail="Valor inválido. Insira: Diaria, Semanal ou Mensal (sem acento)."
             )
 
-        
+    # Calcula previsão e persiste no banco
     previsao_calculada = calculo_previsao(compostagem.peso)
     db_compostagem = Compostagem( # Instanciando objeto da classe compostagem
         data_inicio= compostagem.data_inicio,
@@ -56,7 +59,8 @@ async def criar_compostagem(fkUsuario_comp: int, FkComposteira: int, compostagem
     return db_compostagem
 
 @router.get('/compostagens/{id_compostagem}') # consultando uma composteira
-def exibir_Compostagem(FkComposteira: int, id_compostagem: int, session: Session = Depends(get_session)):
+def exibir_Compostagem(FkComposteira: str, id_compostagem: str, session: Session = Depends(get_session)):
+    # Busca uma compostagem específica filtrando por ID e vínculo com a composteira.
     compostagem = session.scalar(
     select(Compostagem).where(
         (Compostagem.fkComposteira == FkComposteira) & #uma compostagem q cumpra os dois requisitos
@@ -70,7 +74,8 @@ def exibir_Compostagem(FkComposteira: int, id_compostagem: int, session: Session
 
 
 @router.get('/compostagens') #listando compostagens
-def exibir_compostagens(FkComposteira: int, limit: int = 10, offset: int = 0, session: Session = Depends(get_session)):
+def exibir_compostagens(FkComposteira: str, limit: int = 10, offset: int = 0, session: Session = Depends(get_session)):
+    # Lista compostagens de uma composteira com suporte a paginação.
     compostagens = list(session.scalars(
     select(Compostagem).where(Compostagem.fkComposteira == FkComposteira).limit(limit).offset(offset)
 ))    
@@ -80,7 +85,8 @@ def exibir_compostagens(FkComposteira: int, limit: int = 10, offset: int = 0, se
         return {"compostagens_table": [asdict(c) for c in compostagens]}
 
 @router.delete("/compostagens/{id_compostagem}") #deletar do espaço-tempo uma compostagem
-def deletar_compostagem(FkComposteira: int, id_compostagem: int, session: Session = Depends(get_session)):
+def deletar_compostagem(FkComposteira: str, id_compostagem: str, session: Session = Depends(get_session)):
+    # Remove um registro de compostagem do banco de dados.
     db_compostagem = session.scalar(select(Compostagem).where((Compostagem.id_compostagem == id_compostagem) & (Compostagem.fkComposteira == FkComposteira))
 )
 
@@ -94,11 +100,12 @@ def deletar_compostagem(FkComposteira: int, id_compostagem: int, session: Sessio
 
 
 @router.put("/compostagens/{id_compostagem}") #editar uma compostagem ja existente
-def atualizar_compostagem(FkComposteira: int, id_compostagem: int, compostagem: DadosCompostagem, session: Session = Depends(get_session)):
+def atualizar_compostagem(FkComposteira: str, id_compostagem: str, compostagem: DadosCompostagem, session: Session = Depends(get_session)):
+    # Atualiza os dados de uma compostagem existente após validar peso e frequência.
     db_compostagem = session.scalar(select(Compostagem).where((Compostagem.id_compostagem == id_compostagem) & (Compostagem.fkComposteira == FkComposteira))
 )
     
-    
+    # Revalidação de inputs antes do update
     if not compostagem.peso > 0:
         raise HTTPException( #verificando se o peso possui valor válido
             status_code=400,
