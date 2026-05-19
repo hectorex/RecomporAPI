@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 
 from API.database.database import get_session
 from API.models.composteira import Composteira
-from poetry_recomporapi.API.models.user_model import User
+from API.models.user_model import User
 from API.schemas.composteira_schema import DadosComposteira
 # from API.database.fake_db import bd_composteiras
 
