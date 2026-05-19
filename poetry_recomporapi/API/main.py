@@ -34,3 +34,6 @@ def api_status():
     # Verifica se a API está online e retorna a versão atual
     return {"status": "online",
             "versão": "pre-alfa"}
+
+
+    #gustavo campeao jifro 2026
