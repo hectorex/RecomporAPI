@@ -3,6 +3,7 @@ from datetime import date, datetime
 from fastapi import HTTPException
 
 class DadosComposteira(BaseModel):  # Classe da composteira
+    # Esquema de entrada para registro de uma nova composteira.
     nome: str
     tipo: str
     minhocas: bool
